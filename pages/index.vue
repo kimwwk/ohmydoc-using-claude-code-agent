@@ -7,9 +7,18 @@
         <!-- Empty slot - will be populated in MVP 8 -->
       </template>
 
-      <!-- Right action slot reserved for Export and Zoom buttons (MVPs 7 & 9) -->
+      <!-- Right action slot: Export button (MVP 7) -->
       <template #right-actions>
-        <!-- Empty slot - will be populated in MVPs 7 & 9 -->
+        <UButton
+          icon="i-heroicons-arrow-down-tray"
+          color="primary"
+          variant="solid"
+          size="sm"
+          :loading="isExporting"
+          @click="handleExport"
+        >
+          Export HTML
+        </UButton>
       </template>
     </AppHeader>
 
@@ -25,7 +34,7 @@
       </div>
 
       <!-- Right Panel: Preview -->
-      <div class="preview-panel">
+      <div ref="previewPanelRef" class="preview-panel">
         <PreviewPanel
           :xml-content="debouncedXmlContent"
           :zoom="1"
@@ -37,6 +46,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useExport } from '~/composables/useExport'
 
 /**
  * Main Application Page - MVP 6: Dual-Panel Integration
@@ -64,8 +74,62 @@ useHead({
 const xmlContent = ref('')
 const debouncedXmlContent = ref('')
 
+// Preview panel ref for export functionality
+const previewPanelRef = ref<HTMLElement | null>(null)
+
+// Export state
+const isExporting = ref(false)
+const { exportHtml } = useExport()
+const toast = useToast()
+
 // Debounce timer ref
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+/**
+ * Handle HTML export
+ * Uses the useExport composable to generate and download standalone HTML
+ */
+async function handleExport() {
+  if (isExporting.value) return
+
+  isExporting.value = true
+
+  try {
+    const result = exportHtml(previewPanelRef.value)
+
+    if (result.success) {
+      toast.add({
+        title: 'Export Successful',
+        description: `Downloaded ${result.filename}`,
+        icon: 'i-heroicons-check-circle',
+        color: 'green',
+        timeout: 3000,
+      })
+    }
+    else {
+      toast.add({
+        title: 'Export Failed',
+        description: result.error || 'Unknown error occurred',
+        icon: 'i-heroicons-exclamation-triangle',
+        color: 'red',
+        timeout: 5000,
+      })
+    }
+  }
+  catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+    toast.add({
+      title: 'Export Failed',
+      description: errorMessage,
+      icon: 'i-heroicons-exclamation-triangle',
+      color: 'red',
+      timeout: 5000,
+    })
+  }
+  finally {
+    isExporting.value = false
+  }
+}
 
 /**
  * Debounce watcher: Updates preview 300ms after user stops typing

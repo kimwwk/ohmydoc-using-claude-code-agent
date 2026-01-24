@@ -2,7 +2,7 @@
   "master": {
     "tasks": [
       {
-        "id": 1,
+        "id": "1",
         "title": "Basic App Shell with Header and Routing",
         "description": "Create foundation app structure with header component and routing setup",
         "details": "Verify basic Nuxt.js app structure with app.vue or pages structure. Create components/AppHeader.vue using @nuxt/ui components (UContainer, title text). Display app title with empty action slots (left and right) for future buttons (MVPs 7-9). Configure routing to ensure navigation to /debug/* pages works. Verify @nuxt/ui module is configured in nuxt.config.ts.",
@@ -51,7 +51,7 @@
         "expansionPrompt": "Break down the foundational setup into discrete components: Nuxt.js project initialization, @nuxt/ui module configuration, header component creation, and routing setup. Each subtask should be independently testable."
       },
       {
-        "id": 2,
+        "id": "2",
         "title": "XML Parser Composable with Interactive Demo",
         "description": "Implement XML parsing functionality with TypeScript interfaces and create debug page for testing",
         "details": "Create composables/useXmlParser.ts with ParsedData interface matching XML schema from docs/sample/cover-letter.xml. Implement parseXml(xmlString) function using browser's native DOMParser API (DECISIONS.md: zero dependencies, fast, simple XML). Implement validateXml(xmlString) function for error handling. Create pages/debug/parser.vue with UTextarea for XML input, UButton to trigger parse, formatted JSON output display, and UAlert for validation errors. Load sample from /public/samples/cover-letter.xml on mount.",
@@ -127,7 +127,7 @@
         "expansionPrompt": "Separate the XML parsing logic from the UI demo: create TypeScript interfaces, implement core parsing functions, add validation logic, build the debug interface, and integrate with sample data. Focus on robust error handling for XML parsing edge cases."
       },
       {
-        "id": 3,
+        "id": "3",
         "title": "Template System with Modern Template Implementation",
         "description": "Create template system with Modern template using Vue SFC with scoped CSS (no @nuxt/ui in templates)",
         "details": "Create composables/useTemplate.ts with code-level template selection (ACTIVE_TEMPLATE constant - PoC has no UI dropdown per DECISIONS.md). Implement templates/modern/CoverLetterModern.vue with full structure per PRD section 5.2.3, props interface for ParsedData, and scoped CSS (or separate styles.css imported in component). Use color palette from PRD 4.2 and typography from PRD 4.3. CRITICAL: Templates must NOT use @nuxt/ui components (DECISIONS.md: templates are exportable, only scoped CSS). Create pages/debug/template.vue with hardcoded sample data.",
@@ -204,7 +204,7 @@
         "expansionPrompt": "Divide into template architecture design, composable creation, Modern template component implementation, comprehensive styling system, debug page creation, and integration testing. Ensure the template system is extensible for future templates."
       },
       {
-        "id": 4,
+        "id": "4",
         "title": "Monaco XML Editor Component",
         "description": "Create reusable Monaco editor wrapper component for XML editing (used in MVP 6 main app)",
         "details": "Install nuxt-monaco-editor dependency per DECISIONS.md Decision 8 (Monaco is VS Code's editor with XML support built-in). Configure Monaco in nuxt.config.ts. Create components/XmlEditor.vue as reusable Monaco wrapper with XML language support, v-model two-way binding (props: modelValue string, emits: update:modelValue, error). Configure editor features: line numbers, auto-indent, XML syntax highlighting, IntelliSense. Create pages/debug/editor.vue to test component in isolation (load sample XML, show editor stats like line/char count) before using in main app (MVP 6).\n<info added on 2025-11-03T22:08:10.805Z>\nCOMPLETION SUMMARY:\n\nTask 4 has been successfully completed and is ready for review. All implementation objectives have been achieved:\n\n✅ XmlEditor.vue component created with full v-model support and XML-specific Monaco configuration\n✅ All editor features implemented: line numbers, auto-indent, syntax highlighting, IntelliSense, bracket matching, auto-closing tags\n✅ Debug page (/debug/editor) built for component isolation testing with sample XML auto-loading and real-time statistics\n✅ All subtasks (4.1-4.4) completed and validated\n✅ Code linting passes for all new files\n✅ Pull request created: https://github.com/kimsing-ai/ohmydoc-using-claude-code-agent/pull/12\n\nTESTING VALIDATION COMPLETE:\n- Monaco editor loads without errors\n- XML syntax highlighting working correctly\n- v-model two-way binding confirmed (Clear/Reset buttons update stats reactively)\n- Line numbers and auto-indentation functional\n- Component is reusable for MVP 6 integration\n- No runtime errors in console\n\nThe XmlEditor component is production-ready and follows all architectural patterns from CLAUDE.md. Component is ready for integration into MVP 6 main application.\n</info added on 2025-11-03T22:08:10.805Z>",
@@ -267,7 +267,7 @@
         "expansionPrompt": "Break into Monaco editor dependency setup, wrapper component creation with v-model implementation, XML syntax highlighting configuration, and debug page integration. Focus on proper event handling and editor configuration."
       },
       {
-        "id": 5,
+        "id": "5",
         "title": "Preview Panel Component with Error Handling",
         "description": "Create preview component integrating XML parser (MVP 2) and template system (MVP 3) with error handling",
         "details": "Create components/PreviewPanel.vue - this is the integration point combining useXmlParser (MVP 2) and useTemplate (MVP 3). Props: xmlContent (string), zoom (number, default 1). Parse XML using useXmlParser, get template via useTemplate, render template with parsed data. Critical: Handle errors gracefully with UAlert (@nuxt/ui) for invalid XML - must NOT crash. Apply CSS transform scale based on zoom prop. Create pages/debug/preview.vue with dropdown to select test XMLs: valid sample, invalid syntax, empty XML, missing required fields (edge cases). This component will be reused in MVP 6 main app.",
@@ -344,13 +344,13 @@
         "updatedAt": "2025-11-03T23:21:50.847Z"
       },
       {
-        "id": 6,
+        "id": "6",
         "title": "Dual-Panel Integration with Real-Time Updates",
         "description": "Main app page integrating all MVPs 1-5: complete XML editing workflow with 300ms debounced real-time preview - COMPLETED SUCCESSFULLY",
-        "status": "review",
+        "status": "done",
         "dependencies": [
-          4,
-          5
+          "4",
+          "5"
         ],
         "priority": "high",
         "details": "Successfully created main pages/index.vue integrating all MVPs 1-5 for complete end-to-end workflow. Implemented dual-panel layout (CSS Grid, 50/50 split): left panel uses XmlEditor (MVP 4), right panel uses PreviewPanel (MVP 5 which uses parser MVP 2 and templates MVP 3). Wired v-model from editor to preview with 300ms debounce per DECISIONS.md Decision 5 (< 500ms threshold, smooth UX). Sample XML loads from /samples/cover-letter.xml on mount. Updated AppHeader (MVP 1) with app title 'OhMyDoc v2', tagline 'XML to HTML Transformer', and empty action slots (left for MVP 8, right for MVPs 7 & 9). Responsive design with 1024px minimum. All tests passed: linting clean, dev server starts successfully, application loads and renders correctly. This completes core editing workflow - MVPs 7-12 are enhancements.",
@@ -425,10 +425,14 @@
             "testStrategy": "Verify end-to-end workflow works: load → edit → preview updates after 300ms → error handling, responsive layout works at 1024px+ widths, performance is smooth with large XML files, no layout shift/flicker during updates, memory usage is stable with repeated edits, and user experience feels polished",
             "parentId": "undefined"
           }
-        ]
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "Break into layout implementation, component integration, real-time update system with debouncing, sample data loading, header updates, and responsive design testing. Focus on smooth user experience and performance optimization.",
+        "updatedAt": "2026-01-24T17:08:49.275Z"
       },
       {
-        "id": 7,
+        "id": "7",
         "title": "HTML Export Functionality",
         "description": "Implement HTML export feature to download rendered template as standalone file",
         "details": "Create composables/useExport.ts with exportHtml(previewElementId, templateName) function. Extract rendered HTML from preview element, extract scoped CSS from template (excluding @nuxt/ui styles), generate standalone HTML document with embedded CSS, and trigger download with proper filename. Update AppHeader.vue to add 'Export HTML' UButton on right side. Update pages/index.vue to add ref to preview element and connect export button to useExport composable.",
@@ -437,7 +441,7 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -500,10 +504,11 @@
         ],
         "complexity": 6,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Divide into export composable creation, HTML extraction logic, CSS processing and embedding, file download implementation, and UI integration. Focus on generating clean, standalone HTML files with proper CSS isolation."
+        "expansionPrompt": "Divide into export composable creation, HTML extraction logic, CSS processing and embedding, file download implementation, and UI integration. Focus on generating clean, standalone HTML files with proper CSS isolation.",
+        "updatedAt": "2026-01-24T17:10:26.221Z"
       },
       {
-        "id": 8,
+        "id": "8",
         "title": "Editor Actions (Format, Clear, Import)",
         "description": "Implement complete editor toolbar functionality with format, clear, and import features",
         "details": "Add 'Format' button in AppHeader left side actions to implement XML prettify/auto-indent logic and update editor content. Add 'Clear' button with UModal confirmation dialog to clear editor content on confirm. Add 'Import' button with UInput type='file' for XML file picker, validate file type (.xml), and load file content into editor. All buttons use @nuxt/ui components with proper error handling for invalid files.",
@@ -595,7 +600,7 @@
         "expansionPrompt": "Break into XML formatting logic, clear functionality with confirmation, file import system, error handling for each action, UI integration, and comprehensive testing. Ensure each action provides appropriate user feedback."
       },
       {
-        "id": 9,
+        "id": "9",
         "title": "Preview Zoom Controls",
         "description": "Add zoom functionality for preview panel with multiple zoom levels",
         "details": "Update AppHeader.vue to add zoom controls on right side with export button. Implement zoom levels: 75%, 100%, 125%, 150% using @nuxt/ui button group or dropdown. Update pages/index.vue to add zoom state (ref) and pass zoom to PreviewPanel component. Optionally persist zoom level to localStorage for user preference.",
@@ -658,7 +663,7 @@
         "expansionPrompt": "Separate into zoom control UI implementation, zoom state management, preview scaling logic, and optional localStorage persistence. Focus on smooth scaling transitions and maintaining layout integrity."
       },
       {
-        "id": 10,
+        "id": "10",
         "title": "Panel Resizing with Draggable Divider",
         "description": "Implement draggable divider between editor and preview panels for custom sizing",
         "details": "Install and use splitpanes npm package or implement custom CSS resize with drag handle. Update pages/index.vue to add resizable split between editor and preview with draggable divider to adjust widths. Enforce minimum widths (e.g., 30% each panel). Optionally persist panel sizes to localStorage for user preference.",
@@ -721,7 +726,7 @@
         "expansionPrompt": "Break into splitpanes library integration, drag handle implementation, minimum width constraints, and optional persistence. Focus on smooth resizing behavior and proper Monaco editor resize handling."
       },
       {
-        "id": 11,
+        "id": "11",
         "title": "Additional Templates (Classic & Minimal)",
         "description": "Create Classic and Minimal templates to demonstrate template extensibility",
         "details": "Create templates/classic/CoverLetterClassic.vue with different HTML structure (table-based layout) and templates/classic/styles.css. Create templates/minimal/CoverLetterMinimal.vue with minimal HTML structure (plain divs) and templates/minimal/styles.css. Update composables/useTemplate.ts to import and register new templates with documentation on changing ACTIVE_TEMPLATE constant. Update /debug/template page with dropdown to switch between templates or show all three side-by-side.\n<info added on 2025-11-04T04:33:58.783Z>\nTask completed successfully with all deliverables implemented and tested. All 5 subtasks completed:\n\n- Classic template with table-based layout created and functional\n- Minimal template with simple div structure implemented  \n- Template system extended to support multi-template registration and selection\n- Debug page enhanced with dropdown selection and side-by-side comparison view\n- Comprehensive documentation added covering template system architecture and usage\n\nImplementation verified through testing:\n- Linting passes without errors\n- Development server starts successfully on port 3002\n- All three templates (Modern, Classic, Minimal) render correctly with sample data\n- Template switching via ACTIVE_TEMPLATE constant works as expected\n- Debug page provides intuitive template selection and comparison functionality\n\nPull request #17 created and ready for review: https://github.com/kimsing-ai/ohmydoc-using-claude-code-agent/pull/17\nBranch: feature/task-11-additional-templates\n</info added on 2025-11-04T04:33:58.783Z>",
@@ -730,7 +735,7 @@
         "dependencies": [
           "3"
         ],
-        "status": "review",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -798,10 +803,11 @@
         ],
         "complexity": 4,
         "recommendedSubtasks": 5,
-        "expansionPrompt": "Divide into Classic template creation, Minimal template creation, template system updates, debug page enhancements, and documentation updates. Ensure each template demonstrates different layout approaches while maintaining consistency."
+        "expansionPrompt": "Divide into Classic template creation, Minimal template creation, template system updates, debug page enhancements, and documentation updates. Ensure each template demonstrates different layout approaches while maintaining consistency.",
+        "updatedAt": "2026-01-24T17:08:54.256Z"
       },
       {
-        "id": 12,
+        "id": "12",
         "title": "Accessibility & Cross-Browser Polish",
         "description": "Implement WCAG AA compliance, keyboard navigation, and cross-browser compatibility",
         "details": "Implement keyboard navigation with logical tab order (header → editor → preview), keyboard shortcuts (e.g., Ctrl+S to export), and focus management with visible focus indicators. Add ARIA labels to buttons, aria-live to error messages, and screen reader announcements for preview updates. Verify all text meets WCAG AA contrast ratio and adjust colors if needed. Test on Chrome, Firefox, Safari and fix browser-specific issues. Add polyfills if needed. Optimize performance with lazy loading Monaco, code splitting for debug pages, and bundle size optimization.",
@@ -923,15 +929,12 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2025-11-03T23:21:50.848Z",
+      "lastModified": "2026-01-24T17:10:26.221Z",
       "taskCount": 12,
-      "completedCount": 5,
+      "completedCount": 7,
       "tags": [
         "master"
-      ],
-      "created": "2025-11-03T23:30:26.900Z",
-      "description": "Tasks for master context",
-      "updated": "2025-11-04T04:33:46.315Z"
+      ]
     }
   }
 }
