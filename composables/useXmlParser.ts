@@ -64,7 +64,7 @@ export interface ValidationResult {
 
 export interface ParseResult {
   success: boolean
-  data?: ParsedData
+  data?: unknown
   error?: string
 }
 

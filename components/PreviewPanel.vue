@@ -38,7 +38,6 @@
 import { ref, computed, watch } from 'vue'
 import { useTemplate } from '~/composables/useTemplate'
 import { useDocumentType } from '~/composables/useDocumentType'
-import type { ParsedData } from '~/composables/useXmlParser'
 
 // Ensure this component only runs on the client side (DOMParser is browser-only)
 defineOptions({
@@ -65,8 +64,8 @@ const props = withDefaults(defineProps<Props>(), {
   zoom: 1,
 })
 
-// Reactive state
-const parsedData = ref<ParsedData | undefined>(undefined)
+// Reactive state — typed as unknown to support multiple document types
+const parsedData = ref<unknown>(undefined)
 const error = ref<string | undefined>(undefined)
 const isLoading = ref(false)
 

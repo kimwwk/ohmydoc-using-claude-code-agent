@@ -1,0 +1,22 @@
+<resignationLetter>
+    <sender>
+        <name>Jane Doe</name>
+        <position>Marketing Coordinator</position>
+    </sender>
+    <date>March 15, 2026</date>
+    <recipient>
+        <name>John Smith</name>
+        <title>Director of Operations</title>
+        <company>Brightwave Marketing</company>
+    </recipient>
+    <body>
+        <paragraph>I am writing to formally notify you of my resignation from my position as Marketing Coordinator at Brightwave Marketing, effective March 29, 2026. I am providing two weeks notice as required by my employment agreement.</paragraph>
+        <paragraph>During my time at Brightwave Marketing, I have had the privilege of working alongside a talented and dedicated team. I am grateful for the opportunities I have been given to grow professionally, lead meaningful campaigns, and contribute to the company's success.</paragraph>
+        <paragraph>I am committed to ensuring a smooth transition. Over the next two weeks, I will do my best to complete outstanding projects, document ongoing work, and assist in onboarding my replacement if needed. Please let me know how I can best support the team during this period.</paragraph>
+        <paragraph>Thank you for the support and mentorship you have provided throughout my tenure. I hope to stay in touch and wish the company continued success in the years ahead.</paragraph>
+    </body>
+    <signature>
+        <name>Jane Doe</name>
+        <position>Marketing Coordinator</position>
+    </signature>
+</resignationLetter>
