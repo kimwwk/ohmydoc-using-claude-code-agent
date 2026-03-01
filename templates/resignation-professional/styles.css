@@ -143,7 +143,22 @@
   .resignation-professional {
     padding: 0;
     max-width: none;
-    margin: 0 2cm;
+    /* @page in app.vue provides 2cm physical margins; reset CSS margin here */
+    margin: 0;
+  }
+
+  /* Avoid splitting header and recipient across pages */
+  .rp-header,
+  .rp-recipient,
+  .rp-signature-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines in body */
+  .rp-paragraph {
+    orphans: 3;
+    widows: 3;
   }
 }
 

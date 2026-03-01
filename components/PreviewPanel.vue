@@ -156,6 +156,23 @@ watch(
   padding-bottom: 2rem;
 }
 
+/* Print: reveal full document without scroll clipping or zoom transform */
+@media print {
+  .preview-panel {
+    overflow: visible;
+    height: auto;
+    background: transparent;
+    padding: 0;
+  }
+
+  .preview-container {
+    /* Cancel any active zoom transform so content prints at 100% */
+    transform: none !important;
+    width: 100%;
+    padding-bottom: 0;
+  }
+}
+
 /* Template switch fade transition */
 .template-fade-enter-active,
 .template-fade-leave-active {

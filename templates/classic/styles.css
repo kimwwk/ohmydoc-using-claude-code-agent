@@ -221,11 +221,34 @@ td {
   .classic-document {
     padding: 0;
     max-width: none;
-    margin: 0 2cm;
+    /* @page in app.vue provides 2cm physical margins; reset CSS margin here */
+    margin: 0;
   }
 
   .header-table {
     border-bottom: 2px solid #000;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Avoid splitting experience blocks across pages */
+  .experience-block,
+  .recipient-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .experience-employer {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines */
+  .introduction,
+  .motivation,
+  .closing {
+    orphans: 3;
+    widows: 3;
   }
 
   .contact-block .email {
