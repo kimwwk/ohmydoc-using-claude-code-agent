@@ -13,6 +13,7 @@
 import { computed, onMounted } from 'vue'
 import { parseXml as parseCoverLetterXml, validateXml as validateCoverLetterXml } from '~/composables/useXmlParser'
 import type { ValidationResult, ParseResult } from '~/composables/useXmlParser'
+import { parseResignationXml, validateResignationXml } from '~/composables/useResignationParser'
 
 const LS_KEY = 'ohmydoc_document_type'
 
@@ -56,6 +57,16 @@ const documentTypes: Record<string, DocumentTypeConfig> = {
     templates: ['modern', 'classic', 'minimal'],
     parse: parseCoverLetterXml,
     validate: validateCoverLetterXml,
+  },
+  'resignation-letter': {
+    name: 'resignation-letter',
+    displayName: 'Resignation Letter',
+    description: 'Formal resignation letter to notify an employer',
+    sampleXmlPath: '/samples/resignation-letter.xml',
+    defaultTemplate: 'resignation-professional',
+    templates: ['resignation-professional', 'resignation-brief'],
+    parse: parseResignationXml,
+    validate: validateResignationXml,
   },
 }
 

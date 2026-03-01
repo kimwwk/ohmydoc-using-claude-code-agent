@@ -11,6 +11,8 @@ import type { Component } from 'vue'
 import CoverLetterModern from '~/templates/modern/CoverLetterModern.vue'
 import CoverLetterClassic from '~/templates/classic/CoverLetterClassic.vue'
 import CoverLetterMinimal from '~/templates/minimal/CoverLetterMinimal.vue'
+import ResignationProfessional from '~/templates/resignation-professional/ResignationProfessional.vue'
+import ResignationBrief from '~/templates/resignation-brief/ResignationBrief.vue'
 
 const LS_KEY = 'ohmydoc_template'
 
@@ -63,6 +65,24 @@ const templates: TemplateRegistry = {
       displayName: 'Minimal',
       description: 'Clean, minimalist cover letter design with simple structure and generous whitespace',
       documentTypes: ['cover-letter'],
+    },
+  },
+  'resignation-professional': {
+    component: ResignationProfessional,
+    metadata: {
+      name: 'resignation-professional',
+      displayName: 'Professional',
+      description: 'Formal letterhead layout with sender top-left, date top-right, and clean typography',
+      documentTypes: ['resignation-letter'],
+    },
+  },
+  'resignation-brief': {
+    component: ResignationBrief,
+    metadata: {
+      name: 'resignation-brief',
+      displayName: 'Brief',
+      description: 'Compact, minimal resignation letter with just the essentials',
+      documentTypes: ['resignation-letter'],
     },
   },
 }

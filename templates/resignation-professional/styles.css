@@ -1,0 +1,168 @@
+/**
+ * Professional Resignation Letter Template Styles
+ *
+ * Formal letterhead design: sender top-left, date top-right, ruled divider.
+ * Inherits the project design system palette from PRD.md §4.2.
+ *
+ * Color palette: --ink: #111, --muted: #555, --accent: #0f6fec
+ * Typography:    --font-body: ui-serif, --font-ui: ui-sans-serif
+ *
+ * Scoped via Vue's data-v-* attributes — safe to use generic selectors.
+ */
+
+/* ── Design System ───────────────────────────────────────────────────── */
+:root {
+  --rp-font-body: ui-serif, Georgia, "Times New Roman", Times, serif;
+  --rp-font-ui:   ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  --rp-ink:       #111;
+  --rp-muted:     #555;
+  --rp-rule:      #d4d4d4;
+  --rp-max-width: 720px;
+  --rp-line:      1.65;
+}
+
+/* ── Document Container ──────────────────────────────────────────────── */
+.resignation-professional {
+  margin: 0 auto;
+  max-width: var(--rp-max-width);
+  background: #fff;
+  color: var(--rp-ink);
+  font: 16px/var(--rp-line) var(--rp-font-body);
+  padding: 2.5rem 1.25rem;
+}
+
+/* ── Header (sender left / date right) ─────────────────────────────── */
+.rp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.rp-sender {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.rp-sender-name {
+  font-family: var(--rp-font-ui);
+  font-size: clamp(1.3rem, 1.8vw + 0.8rem, 1.75rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--rp-ink);
+}
+
+.rp-sender-position {
+  margin: 0;
+  font-family: var(--rp-font-ui);
+  font-size: 0.9rem;
+  color: var(--rp-muted);
+  letter-spacing: 0.01em;
+}
+
+.rp-date {
+  font-family: var(--rp-font-ui);
+  font-size: 0.9rem;
+  color: var(--rp-muted);
+  white-space: nowrap;
+  padding-top: 0.25rem;
+}
+
+/* ── Divider ────────────────────────────────────────────────────────── */
+.rp-rule {
+  border: none;
+  border-top: 1px solid var(--rp-rule);
+  margin: 0 0 1.5rem 0;
+}
+
+/* ── Recipient Block ────────────────────────────────────────────────── */
+.rp-recipient {
+  margin-bottom: 1.75rem;
+}
+
+.rp-recipient p {
+  margin: 0 0 0.15rem 0;
+  line-height: 1.5;
+}
+
+.rp-recipient-name {
+  font-weight: 600;
+  color: var(--rp-ink);
+}
+
+.rp-recipient-title {
+  color: var(--rp-muted);
+  font-size: 0.95rem;
+}
+
+.rp-recipient-company {
+  color: var(--rp-ink);
+  font-family: var(--rp-font-ui);
+  font-size: 0.95rem;
+}
+
+/* ── Body Paragraphs ────────────────────────────────────────────────── */
+.rp-body {
+  margin-bottom: 2rem;
+}
+
+.rp-paragraph {
+  margin: 0 0 1rem 0;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.rp-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Signature Block ────────────────────────────────────────────────── */
+.rp-signature-block {
+  margin-top: 2.5rem;
+}
+
+.rp-signature-block p {
+  margin: 0 0 0.15rem 0;
+}
+
+.rp-signature-name {
+  font-weight: 600;
+  color: var(--rp-ink);
+}
+
+.rp-signature-position {
+  font-family: var(--rp-font-ui);
+  font-size: 0.9rem;
+  color: var(--rp-muted);
+}
+
+/* ── Print ──────────────────────────────────────────────────────────── */
+@media print {
+  .resignation-professional {
+    padding: 0;
+    max-width: none;
+    margin: 0 2cm;
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media screen and (max-width: 768px) {
+  .resignation-professional {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .rp-header {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  .rp-sender-name {
+    font-size: 1.35rem;
+  }
+
+  .rp-paragraph {
+    text-align: left;
+  }
+}
