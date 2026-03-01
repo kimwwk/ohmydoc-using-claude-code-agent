@@ -22,9 +22,9 @@
           <USelectMenu
             id="template-select"
             v-model="selectedTemplate"
-            :options="templateOptions"
-            value-attribute="value"
-            option-attribute="label"
+            :items="templateOptions"
+            value-key="value"
+            label-key="label"
             class="template-select"
           />
         </div>

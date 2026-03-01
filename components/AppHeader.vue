@@ -20,9 +20,9 @@
           <label class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">Type</label>
           <USelectMenu
             v-model="selectedDocumentType"
-            :options="documentTypeOptions"
-            value-attribute="value"
-            option-attribute="label"
+            :items="documentTypeOptions"
+            value-key="value"
+            label-key="label"
             size="xs"
             class="w-36"
           />
@@ -33,9 +33,9 @@
           <label class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">Template</label>
           <USelectMenu
             v-model="selectedTemplate"
-            :options="templateOptions"
-            value-attribute="value"
-            option-attribute="label"
+            :items="templateOptions"
+            value-key="value"
+            label-key="label"
             size="xs"
             class="w-28"
           />
