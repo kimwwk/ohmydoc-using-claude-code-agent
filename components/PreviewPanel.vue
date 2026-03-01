@@ -34,9 +34,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import type { Component } from 'vue'
 import { useXmlParser } from '~/composables/useXmlParser'
-import { getCurrentTemplate } from '~/composables/useTemplate'
+import { useTemplate } from '~/composables/useTemplate'
 import type { ParsedData } from '~/composables/useXmlParser'
 
 // Ensure this component only runs on the client side (DOMParser is browser-only)
@@ -68,10 +67,10 @@ const props = withDefaults(defineProps<Props>(), {
 const parsedData = ref<ParsedData | undefined>(undefined)
 const error = ref<string | undefined>(undefined)
 const isLoading = ref(false)
-const templateComponent = ref<Component | undefined>(undefined)
 
 // Get composables
 const { parseXml } = useXmlParser()
+const { currentTemplate: templateComponent, activeTemplate } = useTemplate()
 
 // Computed style for zoom transform
 const containerStyle = computed(() => ({
@@ -84,32 +83,23 @@ const containerStyle = computed(() => ({
  * Handles all parsing errors gracefully with user-friendly messages
  */
 function updatePreview() {
-  // Reset state
   isLoading.value = true
   error.value = undefined
   parsedData.value = undefined
-  templateComponent.value = undefined
 
   try {
-    // Get the current template component
-    templateComponent.value = getCurrentTemplate()
-
-    // Parse XML content
     const result = parseXml(props.xmlContent)
 
     if (result.success && result.data) {
-      // Success: update parsed data
       parsedData.value = result.data
       error.value = undefined
     }
     else {
-      // Parsing failed: show user-friendly error
       error.value = result.error || 'Unknown parsing error occurred'
       parsedData.value = undefined
     }
   }
   catch (err) {
-    // Catch any unexpected errors (e.g., template not found)
     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred'
     error.value = `Preview error: ${errorMessage}`
     parsedData.value = undefined
@@ -119,9 +109,9 @@ function updatePreview() {
   }
 }
 
-// Watch for changes to xmlContent and re-parse automatically
+// Re-parse when xmlContent changes, and re-render when active template changes
 watch(
-  () => props.xmlContent,
+  [() => props.xmlContent, activeTemplate],
   () => {
     updatePreview()
   },
