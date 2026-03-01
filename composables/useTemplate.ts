@@ -14,11 +14,13 @@ import CoverLetterMinimal from '~/templates/minimal/CoverLetterMinimal.vue'
 
 const LS_KEY = 'ohmydoc_template'
 
-// Template metadata interface for future extensibility
+// Template metadata interface
 export interface TemplateMetadata {
   name: string
   displayName: string
   description: string
+  /** Document type names this template supports (matches DocumentTypeConfig.name) */
+  documentTypes: string[]
 }
 
 // Template registry type
@@ -42,6 +44,7 @@ const templates: TemplateRegistry = {
       name: 'modern',
       displayName: 'Modern',
       description: 'Professional cover letter template with modern styling and clean typography',
+      documentTypes: ['cover-letter'],
     },
   },
   classic: {
@@ -50,6 +53,7 @@ const templates: TemplateRegistry = {
       name: 'classic',
       displayName: 'Classic',
       description: 'Traditional cover letter with table-based layout and formal styling',
+      documentTypes: ['cover-letter'],
     },
   },
   minimal: {
@@ -58,6 +62,7 @@ const templates: TemplateRegistry = {
       name: 'minimal',
       displayName: 'Minimal',
       description: 'Clean, minimalist cover letter design with simple structure and generous whitespace',
+      documentTypes: ['cover-letter'],
     },
   },
 }
@@ -124,6 +129,13 @@ export function useTemplate() {
     return Object.values(templates).map(t => t.metadata)
   }
 
+  /** Metadata objects for templates that support the given document type */
+  function getTemplatesForDocumentType(docType: string): TemplateMetadata[] {
+    return Object.values(templates)
+      .filter(t => t.metadata.documentTypes.includes(docType))
+      .map(t => t.metadata)
+  }
+
   return {
     activeTemplate,
     setActiveTemplate,
@@ -131,5 +143,6 @@ export function useTemplate() {
     currentTemplateMetadata,
     getAvailableTemplates,
     getAllTemplateMetadata,
+    getTemplatesForDocumentType,
   }
 }
