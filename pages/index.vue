@@ -7,9 +7,16 @@
         <!-- Empty slot - will be populated in MVP 8 -->
       </template>
 
-      <!-- Right action slot reserved for Export and Zoom buttons (MVPs 7 & 9) -->
+      <!-- Right action slot: Export PDF button -->
       <template #right-actions>
-        <!-- Empty slot - will be populated in MVPs 7 & 9 -->
+        <UButton
+          size="xs"
+          variant="outline"
+          icon="i-heroicons-printer"
+          @click="handlePrint"
+        >
+          Export PDF
+        </UButton>
       </template>
     </AppHeader>
 
@@ -82,6 +89,10 @@ import { useDocumentType } from '~/composables/useDocumentType'
  */
 
 const LS_KEY = 'ohmydoc_xml_content'
+
+function handlePrint() {
+  window.print()
+}
 
 const { activeDocumentType, currentDocumentType } = useDocumentType()
 
@@ -240,6 +251,49 @@ onUnmounted(() => {
   overflow: auto;
   background-color: var(--color-gray-50);
   transition: background-color 0.15s ease;
+}
+
+/**
+ * Print: hide all editor chrome, show only the preview document
+ *
+ * - Hide header (dropdowns, buttons, title)
+ * - Hide the XML editor panel
+ * - Collapse the dual-panel grid to a single column
+ * - Let the preview fill the full printable area
+ * - @page margin (in app.vue) provides the physical page margins
+ */
+@media print {
+  .app-container {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Hide entire app header (title, type/template dropdowns, export button) */
+  .app-header {
+    display: none;
+  }
+
+  /* Hide the XML editor */
+  .editor-panel {
+    display: none;
+  }
+
+  /* Collapse the two-column grid; let preview fill the page */
+  .dual-panel-layout {
+    display: block;
+    min-width: unset;
+  }
+
+  /* Strip the preview wrapper background so only the document shows */
+  .preview-panel {
+    background: transparent;
+  }
+
+  /* Hide the welcome screen if visible */
+  .welcome-screen {
+    display: none;
+  }
 }
 
 /**

@@ -103,7 +103,22 @@
   .resignation-brief {
     padding: 0;
     max-width: none;
-    margin: 0 2cm;
+    /* @page in app.vue provides 2cm physical margins; reset CSS margin here */
+    margin: 0;
+  }
+
+  /* Avoid splitting header/recipient/signature across pages */
+  .rb-header,
+  .rb-recipient,
+  .rb-signature {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines */
+  .rb-paragraph {
+    orphans: 3;
+    widows: 3;
   }
 }
 

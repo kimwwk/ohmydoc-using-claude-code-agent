@@ -158,7 +158,28 @@ li::before {
   .minimal-document {
     padding: 0;
     max-width: none;
-    margin: 0 2cm;
+    /* @page in app.vue provides 2cm physical margins; reset CSS margin here */
+    margin: 0;
+  }
+
+  /* Avoid splitting key blocks across pages */
+  .applicant-section,
+  .recipient-section,
+  .experience-block,
+  .signature {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .employer {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines */
+  .paragraph {
+    orphans: 3;
+    widows: 3;
   }
 
   .applicant-contact a {

@@ -203,7 +203,32 @@
   .application-document {
     padding: 0;
     max-width: none;
-    margin: 0 2cm;
+    /* @page in app.vue provides 2cm physical margins; reset CSS margin here */
+    margin: 0;
+  }
+
+  /* Avoid splitting key sections across page breaks */
+  .application-header,
+  .recipient,
+  .experience,
+  .signature {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Keep employer + first bullet together */
+  .experience-employer {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines in body paragraphs */
+  .letter > p,
+  .introduction,
+  .motivation,
+  .closing {
+    orphans: 3;
+    widows: 3;
   }
 
   .contact-information .email {

@@ -212,11 +212,43 @@
 @media print {
   .application-document {
     max-width: none;
+    /* @page in app.vue provides 2cm physical margins; no extra CSS margin needed */
+    margin: 0;
+    /* Ensure two-column grid is preserved in print */
+    display: grid;
+    grid-template-columns: var(--cr-sidebar-width) 1fr;
+    /* Remove screen min-height; let content determine height */
+    min-height: unset;
   }
 
+  /* Force sidebar background colour to print (browsers suppress backgrounds by default) */
   .sidebar {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  /* Prevent sidebar from breaking across pages */
+  .sidebar,
+  .main-content {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Avoid splitting experience blocks */
+  .experience-section > * {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .experience-employer {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Prevent orphaned/widowed lines */
+  .letter > p {
+    orphans: 3;
+    widows: 3;
   }
 
   .contact-item.email {
