@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useDocumentType } from '~/composables/useDocumentType'
 
 /**
  * Main Application Page - MVP 6: Dual-Panel Integration
@@ -77,9 +78,12 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
  * - 300ms debounced real-time updates (per DECISIONS.md)
  * - Persists XML content to localStorage
  * - Minimum 1024px responsive design
+ * - Document type switching loads the appropriate sample XML
  */
 
 const LS_KEY = 'ohmydoc_xml_content'
+
+const { activeDocumentType, currentDocumentType } = useDocumentType()
 
 // Set page metadata
 useHead({
@@ -120,13 +124,14 @@ watch(xmlContent, (newValue) => {
 })
 
 /**
- * Fetch and apply the sample cover letter XML.
- * Called by the "Start with a sample" button on the welcome screen.
+ * Fetch and apply the sample XML for the active document type.
+ * Called by the "Start with a sample" button and when switching document types.
  */
 async function loadSample() {
   isSampleLoading.value = true
+  const samplePath = currentDocumentType.value?.sampleXmlPath ?? '/samples/cover-letter.xml'
   try {
-    const response = await fetch('/samples/cover-letter.xml')
+    const response = await fetch(samplePath)
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`)
     }
@@ -144,6 +149,17 @@ async function loadSample() {
     isSampleLoading.value = false
   }
 }
+
+/**
+ * When the user switches document type from the header dropdown, load the
+ * sample XML for the newly selected type so there's always a valid document
+ * to preview. Only fires on explicit user action (not on initial page load).
+ */
+watch(activeDocumentType, () => {
+  if (!showWelcome.value) {
+    loadSample()
+  }
+}, { immediate: false })
 
 /**
  * On mount: restore saved content from localStorage.

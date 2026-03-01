@@ -36,8 +36,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useXmlParser } from '~/composables/useXmlParser'
 import { useTemplate } from '~/composables/useTemplate'
+import { useDocumentType } from '~/composables/useDocumentType'
 import type { ParsedData } from '~/composables/useXmlParser'
 
 // Ensure this component only runs on the client side (DOMParser is browser-only)
@@ -71,8 +71,8 @@ const error = ref<string | undefined>(undefined)
 const isLoading = ref(false)
 
 // Get composables
-const { parseXml } = useXmlParser()
 const { currentTemplate: templateComponent, activeTemplate } = useTemplate()
+const { currentDocumentType, activeDocumentType } = useDocumentType()
 
 // Computed style for zoom transform
 const containerStyle = computed(() => ({
@@ -90,7 +90,14 @@ function updatePreview() {
   parsedData.value = undefined
 
   try {
-    const result = parseXml(props.xmlContent)
+    const parser = currentDocumentType.value?.parse
+    if (!parser) {
+      error.value = 'No parser available for the active document type'
+      isLoading.value = false
+      return
+    }
+
+    const result = parser(props.xmlContent)
 
     if (result.success && result.data) {
       parsedData.value = result.data
@@ -111,9 +118,9 @@ function updatePreview() {
   }
 }
 
-// Re-parse when xmlContent changes, and re-render when active template changes
+// Re-parse when xmlContent, active template, or active document type changes
 watch(
-  [() => props.xmlContent, activeTemplate],
+  [() => props.xmlContent, activeTemplate, activeDocumentType],
   () => {
     updatePreview()
   },
