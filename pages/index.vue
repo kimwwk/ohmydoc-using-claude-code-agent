@@ -210,7 +210,8 @@ onUnmounted(() => {
   flex-direction: column;
   overflow: hidden;
   background-color: #1e1e1e; /* Dark editor background */
-  border-right: 1px solid var(--color-gray-300);
+  border-right: 1px solid var(--color-gray-200);
+  transition: border-color 0.15s ease;
 }
 
 /**
@@ -222,6 +223,7 @@ onUnmounted(() => {
   flex-direction: column;
   overflow: auto;
   background-color: var(--color-gray-50);
+  transition: background-color 0.15s ease;
 }
 
 /**

@@ -22,7 +22,9 @@
       class="preview-container"
       :style="containerStyle"
     >
-      <component :is="templateComponent" :data="parsedData" />
+      <Transition name="template-fade" mode="out-in">
+        <component :is="templateComponent" :key="activeTemplate" :data="parsedData" />
+      </Transition>
     </div>
 
     <!-- Placeholder State (no data) -->
@@ -125,7 +127,7 @@ watch(
   height: 100%;
   overflow: auto;
   background-color: var(--color-gray-50);
-  padding: 1rem;
+  padding: 1.5rem 1.25rem;
 }
 
 .error-alert {
@@ -146,5 +148,17 @@ watch(
   min-width: 100%;
   /* Ensure zoom transform doesn't clip content */
   padding-bottom: 2rem;
+}
+
+/* Template switch fade transition */
+.template-fade-enter-active,
+.template-fade-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.template-fade-enter-from,
+.template-fade-leave-to {
+  opacity: 0;
+  transform: translateY(4px);
 }
 </style>
