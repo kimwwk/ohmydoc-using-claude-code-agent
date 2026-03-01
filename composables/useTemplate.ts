@@ -11,6 +11,8 @@ import type { Component } from 'vue'
 import CoverLetterModern from '~/templates/modern/CoverLetterModern.vue'
 import CoverLetterClassic from '~/templates/classic/CoverLetterClassic.vue'
 import CoverLetterMinimal from '~/templates/minimal/CoverLetterMinimal.vue'
+import CoverLetterExecutive from '~/templates/executive/CoverLetterExecutive.vue'
+import CoverLetterCreative from '~/templates/creative/CoverLetterCreative.vue'
 import ResignationProfessional from '~/templates/resignation-professional/ResignationProfessional.vue'
 import ResignationBrief from '~/templates/resignation-brief/ResignationBrief.vue'
 
@@ -64,6 +66,24 @@ const templates: TemplateRegistry = {
       name: 'minimal',
       displayName: 'Minimal',
       description: 'Clean, minimalist cover letter design with simple structure and generous whitespace',
+      documentTypes: ['cover-letter'],
+    },
+  },
+  executive: {
+    component: CoverLetterExecutive,
+    metadata: {
+      name: 'executive',
+      displayName: 'Executive',
+      description: 'Bold, confident serif template with navy accent, large name treatment, and horizontal rule dividers',
+      documentTypes: ['cover-letter'],
+    },
+  },
+  creative: {
+    component: CoverLetterCreative,
+    metadata: {
+      name: 'creative',
+      displayName: 'Creative',
+      description: 'Two-column layout with vibrant accent sidebar — designed for designers, creatives, and marketers',
       documentTypes: ['cover-letter'],
     },
   },

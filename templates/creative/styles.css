@@ -1,0 +1,254 @@
+/**
+ * Creative Template Styles
+ *
+ * Bold, visually distinctive cover letter for designers, creatives, and marketers.
+ * Two-column layout: vibrant accent sidebar (left) + clean white content area (right).
+ * Sans-serif throughout for a modern, punchy feel.
+ */
+
+:root {
+  --cr-font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --cr-max-width: 780px;
+  --cr-sidebar-width: 210px;
+  --cr-sidebar-bg: #5e60ce;
+  --cr-sidebar-text: #fff;
+  --cr-sidebar-muted: rgba(255, 255, 255, 0.72);
+  --cr-accent: #48bfe3;
+  --cr-ink: #1a1a2e;
+  --cr-muted: #555570;
+  --cr-line: 1.65;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Two-column layout ───────────────────────────────────── */
+
+.application-document {
+  display: grid;
+  grid-template-columns: var(--cr-sidebar-width) 1fr;
+  max-width: var(--cr-max-width);
+  min-height: 900px;
+  margin: 0 auto;
+  background: #fff;
+  font-family: var(--cr-font);
+  color: var(--cr-ink);
+  font-size: 15px;
+  line-height: var(--cr-line);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+
+.sidebar {
+  background: var(--cr-sidebar-bg);
+  color: var(--cr-sidebar-text);
+  padding: 2.5rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.applicant-name {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0 0 1.25rem 0;
+  word-break: break-word;
+}
+
+.sidebar-divider {
+  width: 2.5rem;
+  height: 3px;
+  background: var(--cr-accent);
+  border-radius: 2px;
+  margin-bottom: 1.25rem;
+}
+
+.applicant-address {
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--cr-sidebar-muted);
+  line-height: 1.6;
+  margin: 0 0 1.25rem 0;
+}
+
+.contact-information {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.contact-item {
+  font-size: 0.78rem;
+  color: var(--cr-sidebar-muted);
+  word-break: break-all;
+  text-decoration: none;
+}
+
+.contact-item.email {
+  color: var(--cr-accent);
+  text-underline-offset: 2px;
+}
+
+.contact-item.email:hover {
+  text-decoration: underline;
+}
+
+/* ── Main content area ───────────────────────────────────── */
+
+.main-content {
+  padding: 2.5rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Date ────────────────────────────────────────────────── */
+
+.document-date {
+  font-size: 0.85rem;
+  color: var(--cr-muted);
+  text-align: right;
+}
+
+/* ── Recipient ───────────────────────────────────────────── */
+
+.recipient {
+  border-left: 3px solid var(--cr-sidebar-bg);
+  padding-left: 0.85rem;
+}
+
+.recipient-position {
+  margin: 0 0 0.1rem 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--cr-ink);
+}
+
+.recipient-company {
+  margin: 0 0 0.15rem 0;
+  font-size: 0.9rem;
+  color: var(--cr-ink);
+}
+
+.recipient-address {
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--cr-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Letter body ─────────────────────────────────────────── */
+
+.letter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.letter > p {
+  margin: 0;
+  line-height: var(--cr-line);
+}
+
+.salutation {
+  font-weight: 600;
+}
+
+.experience-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.experience-employer {
+  margin: 0 0 0.25rem 0;
+  font-weight: 700;
+  color: var(--cr-sidebar-bg);
+  font-size: 0.95rem;
+}
+
+.achievements {
+  margin: 0 0 0 1.25rem;
+  padding: 0;
+  list-style-type: none;
+}
+
+.achievement {
+  position: relative;
+  padding-left: 1rem;
+  margin: 0.2rem 0;
+  line-height: var(--cr-line);
+  color: var(--cr-ink);
+}
+
+.achievement::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  background: var(--cr-accent);
+  border-radius: 50%;
+}
+
+.signature {
+  font-weight: 700;
+  color: var(--cr-sidebar-bg);
+  margin-top: 1.5rem;
+}
+
+/* ── Print ───────────────────────────────────────────────── */
+
+@media print {
+  .application-document {
+    max-width: none;
+  }
+
+  .sidebar {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .contact-item.email {
+    text-decoration: none;
+  }
+}
+
+/* ── Responsive: stack on mobile ────────────────────────── */
+
+@media screen and (max-width: 640px) {
+  .application-document {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+
+  .sidebar {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .applicant-name {
+    font-size: 1.3rem;
+  }
+
+  .contact-information {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .main-content {
+    padding: 1.5rem 1.25rem;
+  }
+}
