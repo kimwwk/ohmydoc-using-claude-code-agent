@@ -1,15 +1,18 @@
 /**
  * Template System Composable
  *
- * Provides template selection and management for document rendering.
- * PoC Implementation: Uses code-level template switching via ACTIVE_TEMPLATE constant.
- * (See DECISIONS.md Decision 4: UI dropdown is post-PoC feature)
+ * Provides reactive template selection and management for document rendering.
+ * Active template is shared across all components via useState and persisted
+ * to localStorage so the selection survives page reloads.
  */
 
+import { onMounted, computed } from 'vue'
 import type { Component } from 'vue'
 import CoverLetterModern from '~/templates/modern/CoverLetterModern.vue'
 import CoverLetterClassic from '~/templates/classic/CoverLetterClassic.vue'
 import CoverLetterMinimal from '~/templates/minimal/CoverLetterMinimal.vue'
+
+const LS_KEY = 'ohmydoc_template'
 
 // Template metadata interface for future extensibility
 export interface TemplateMetadata {
@@ -25,24 +28,6 @@ export interface TemplateRegistry {
     metadata: TemplateMetadata
   }
 }
-
-/**
- * ACTIVE_TEMPLATE Constant
- *
- * Change this constant to switch templates in the PoC.
- * Available options: 'modern', 'classic', 'minimal'
- *
- * Example:
- *   const ACTIVE_TEMPLATE = 'modern'  // Uses Modern template (default)
- *   const ACTIVE_TEMPLATE = 'classic' // Uses Classic template (table-based layout)
- *   const ACTIVE_TEMPLATE = 'minimal' // Uses Minimal template (clean, minimalist style)
- *
- * Template Descriptions:
- * - modern: Professional cover letter with modern styling, semantic HTML (article/header)
- * - classic: Traditional cover letter with table-based layout, uppercase headers
- * - minimal: Clean, minimalist design with simple div structure and generous whitespace
- */
-const ACTIVE_TEMPLATE = 'modern'
 
 /**
  * Template Registry
@@ -78,69 +63,73 @@ const templates: TemplateRegistry = {
 }
 
 /**
- * Get the currently active template component
+ * Composable function to use the reactive template system in Vue components.
  *
- * @returns The Vue component for the active template
- * @throws Error if the active template is not found in the registry
- */
-export function getCurrentTemplate(): Component {
-  const templateEntry = templates[ACTIVE_TEMPLATE]
-
-  if (!templateEntry) {
-    throw new Error(
-      `Template "${ACTIVE_TEMPLATE}" not found. Available templates: ${Object.keys(templates).join(', ')}`
-    )
-  }
-
-  return templateEntry.component
-}
-
-/**
- * Get metadata for the currently active template
+ * Active template state is shared across all component instances via useState.
+ * On mount, the saved localStorage value is restored (client-side only).
  *
- * @returns Template metadata for the active template
- */
-export function getCurrentTemplateMetadata(): TemplateMetadata {
-  const templateEntry = templates[ACTIVE_TEMPLATE]
-
-  if (!templateEntry) {
-    throw new Error(
-      `Template "${ACTIVE_TEMPLATE}" not found. Available templates: ${Object.keys(templates).join(', ')}`
-    )
-  }
-
-  return templateEntry.metadata
-}
-
-/**
- * Get all available template names
- *
- * @returns Array of template names
- */
-export function getAvailableTemplates(): string[] {
-  return Object.keys(templates)
-}
-
-/**
- * Get metadata for all available templates
- *
- * @returns Array of template metadata objects
- */
-export function getAllTemplateMetadata(): TemplateMetadata[] {
-  return Object.values(templates).map(t => t.metadata)
-}
-
-/**
- * Composable function to use template system in Vue components
- *
- * @returns Object with template selection functions
+ * @returns Reactive template state and control functions
  */
 export function useTemplate() {
+  // Shared reactive state — useState ensures all components see the same value
+  const activeTemplate = useState<string>('activeTemplate', () => 'modern')
+
+  // Restore from localStorage after hydration (client-only, runs once per component mount)
+  onMounted(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY)
+      if (saved && templates[saved]) {
+        activeTemplate.value = saved
+      }
+    }
+    catch {
+      // Ignore storage errors (private browsing, quota exceeded, etc.)
+    }
+  })
+
+  /**
+   * Switch to a different template and persist the choice to localStorage.
+   */
+  function setActiveTemplate(name: string) {
+    if (!templates[name]) {
+      console.warn(`Template "${name}" not found. Available: ${Object.keys(templates).join(', ')}`)
+      return
+    }
+    activeTemplate.value = name
+    try {
+      localStorage.setItem(LS_KEY, name)
+    }
+    catch {
+      // Ignore storage errors
+    }
+  }
+
+  /** Reactive component for the currently active template */
+  const currentTemplate = computed<Component | undefined>(
+    () => templates[activeTemplate.value]?.component,
+  )
+
+  /** Metadata for the currently active template */
+  const currentTemplateMetadata = computed<TemplateMetadata | undefined>(
+    () => templates[activeTemplate.value]?.metadata,
+  )
+
+  /** Names of all registered templates */
+  function getAvailableTemplates(): string[] {
+    return Object.keys(templates)
+  }
+
+  /** Metadata objects for all registered templates */
+  function getAllTemplateMetadata(): TemplateMetadata[] {
+    return Object.values(templates).map(t => t.metadata)
+  }
+
   return {
-    getCurrentTemplate,
-    getCurrentTemplateMetadata,
+    activeTemplate,
+    setActiveTemplate,
+    currentTemplate,
+    currentTemplateMetadata,
     getAvailableTemplates,
     getAllTemplateMetadata,
-    activeTemplate: ACTIVE_TEMPLATE,
   }
 }

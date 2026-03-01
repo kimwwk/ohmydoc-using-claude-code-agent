@@ -16,8 +16,21 @@
         </p>
       </div>
 
-      <!-- Right action slot for future buttons (Export, Zoom - MVPs 7 & 9) -->
-      <div class="flex items-center gap-2">
+      <!-- Right: Template switcher + action slot (Export, Zoom - MVPs 7 & 9) -->
+      <div class="flex items-center gap-3">
+        <!-- Template Switcher Dropdown -->
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Template:</label>
+          <USelectMenu
+            v-model="selectedTemplate"
+            :options="templateOptions"
+            value-attribute="value"
+            option-attribute="label"
+            size="sm"
+            class="w-32"
+          />
+        </div>
+
         <slot name="right-actions" />
       </div>
     </div>
@@ -25,8 +38,15 @@
 </template>
 
 <script setup lang="ts">
-// AppHeader component using @nuxt/ui
-// Provides app title and empty action slots for future features
-// - Left slot: Format, Clear, Import buttons (MVP 8)
-// - Right slot: Export and Zoom buttons (MVPs 7 & 9)
+import { computed } from 'vue'
+import { useTemplate } from '~/composables/useTemplate'
+
+const { activeTemplate, setActiveTemplate, getAllTemplateMetadata } = useTemplate()
+
+const templateOptions = getAllTemplateMetadata().map(m => ({ label: m.displayName, value: m.name }))
+
+const selectedTemplate = computed({
+  get: () => activeTemplate.value,
+  set: (val: string) => setActiveTemplate(val),
+})
 </script>
