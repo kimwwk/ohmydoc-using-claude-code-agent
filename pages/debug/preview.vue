@@ -14,7 +14,7 @@
         <USelect
           id="xml-select"
           v-model="selectedSample"
-          :options="sampleOptions"
+          :items="sampleOptions"
           placeholder="Select a test XML sample"
           size="lg"
         />
