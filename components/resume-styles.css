@@ -1,5 +1,5 @@
 /**
- * Resume / Cover Letter Render Styles
+ * Resume / Cover Letter Render Styles — modern.css spec
  *
  * Styles the custom XML elements produced by the AI pipeline:
  *   <document>, <header>, <name>, <contact>, <experience>, etc.
@@ -8,12 +8,13 @@
  * The browser treats unknown elements as inline by default, so each
  * element that needs block-level layout must have display set explicitly.
  *
- * Design system:
- *   --ink:    #111  (body text)
- *   --muted:  #555  (secondary text)
- *   --accent: #0f6fec (links / accent)
- *   --font-body: ui-serif, Georgia, serif
- *   --font-ui:   ui-sans-serif, system-ui, sans-serif
+ * Design spec:
+ *   Font:      Inter, 'DM Sans', system-ui, -apple-system, sans-serif
+ *   Name:      22px / 700
+ *   Sections:  13px / 600 / ALL CAPS / letter-spacing 0.05em / border-bottom 1.5px solid
+ *   Body:      13px / 400 / line-height 1.5
+ *   Contact:   12px / #555
+ *   Layout:    max-width 800px, padding 48px 64px
  */
 
 /* ── Custom element resets ── */
@@ -29,44 +30,42 @@ skills, certifications, projects, volunteer {
 
 /* ── Wrapper applied to the rendered content via .document-render ── */
 .document-render {
-  font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: Inter, 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
   color: #111;
   background: #fff;
 }
 
 /* ── document root ── */
 .document-render document {
-  max-width: 720px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 48px 64px;
   background: #fff;
 }
 
 /* ── header block ── */
 .document-render header {
-  border-bottom: 2px solid #111;
-  padding-bottom: 1rem;
   margin-bottom: 1.5rem;
 }
 
 /* ── applicant name ── */
 .document-render name {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: clamp(1.4rem, 2vw + 1rem, 2rem);
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
+  color: #111;
 }
 
 /* ── contact row ── */
 .document-render contact {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1rem;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 0.9rem;
+  gap: 0.2rem 0.75rem;
+  font-size: 12px;
   color: #555;
 }
 
@@ -87,15 +86,15 @@ skills, certifications, projects, volunteer {
 .document-render projects::before,
 .document-render volunteer::before {
   display: block;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #555;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 0.2rem;
+  color: #111;
+  border-bottom: 1.5px solid #111;
+  padding-bottom: 0.25rem;
   margin-bottom: 0.75rem;
+  margin-top: 0;
 }
 
 .document-render summary::before    { content: "Summary"; }
@@ -114,7 +113,7 @@ skills, certifications, projects, volunteer {
 .document-render certifications,
 .document-render projects,
 .document-render volunteer {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 /* ── summary paragraph text ── */
@@ -124,37 +123,77 @@ skills, certifications, projects, volunteer {
 
 /* ── experience roles ── */
 .document-render role {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .document-render role:last-child {
   margin-bottom: 0;
 }
 
-.document-render title {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+/* ── role header: title + period on same line via flexbox ── */
+.document-render role > title,
+.document-render role > period {
+  display: inline-block;
+}
+
+.document-render role {
+  position: relative;
+}
+
+/* Use a flex row for title + period using a pseudo wrapper approach via display flex on role */
+.document-render role > title {
+  display: inline;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 13px;
   color: #111;
 }
 
-.document-render company {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+.document-render role > company {
+  font-size: 13px;
   color: #555;
-  font-size: 0.9rem;
+  margin-bottom: 0.1rem;
 }
 
-.document-render period {
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  color: #777;
-  font-size: 0.85rem;
-  margin-bottom: 0.4rem;
+/* Title + period on same line: role acts as flex container for title/period */
+.document-render role {
+  display: block;
+}
+
+/* We achieve "title left, period right" by wrapping them in a flex row */
+/* Since we control the XML schema, we wrap via CSS trick: title + period as a pseudo flex row */
+/* We use a separate div approach — but since we can't add wrappers, we use display:flex on role */
+/* and constrain bullets to be display:block to break out */
+.document-render role > bullets {
+  display: block;
+  flex: 0 0 100%;
+}
+
+/* Flex layout for role row: title + period */
+.document-render role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.5rem;
+}
+
+/* Force company and bullets to take full width */
+.document-render role > company,
+.document-render role > bullets {
+  flex: 0 0 100%;
+}
+
+/* Period pushes to the right */
+.document-render role > period {
+  margin-left: auto;
+  font-size: 13px;
+  color: #555;
+  white-space: nowrap;
 }
 
 /* ── bullets list ── */
 .document-render bullets {
-  padding-left: 1.5rem;
-  margin-top: 0.4rem;
+  padding-left: 1.25rem;
+  margin-top: 0.35rem;
 }
 
 .document-render bullet {
@@ -163,22 +202,21 @@ skills, certifications, projects, volunteer {
   color: #111;
   margin-bottom: 0.2rem;
   line-height: 1.5;
+  font-size: 13px;
 }
 
 /* ── education ── */
 .document-render degree {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 13px;
   color: #111;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 .document-render school,
 .document-render year,
 .document-render note {
   color: #555;
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  font-size: 0.9rem;
+  font-size: 13px;
 }
 
 /* ── flat text sections ── */
@@ -187,11 +225,23 @@ skills, certifications, projects, volunteer {
 .document-render projects,
 .document-render volunteer {
   color: #111;
-  line-height: 1.7;
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+/* ── links ── */
+.document-render a {
+  color: #0f6fec;
+  text-decoration: none;
 }
 
 /* ── Print ── */
 @media print {
+  @page {
+    size: A4;
+    margin: 0.75in;
+  }
+
   .document-render document {
     padding: 0;
     max-width: none;
@@ -203,16 +253,21 @@ skills, certifications, projects, volunteer {
     page-break-inside: avoid;
     break-inside: avoid;
   }
+
+  .document-render a {
+    color: #111 !important;
+    text-decoration: none !important;
+  }
 }
 
 /* ── Responsive ── */
 @media screen and (max-width: 768px) {
   .document-render document {
-    padding: 1rem 0.75rem;
+    padding: 1.5rem 1rem;
   }
 
   .document-render name {
-    font-size: 1.5rem;
+    font-size: 18px;
   }
 
   .document-render contact {
