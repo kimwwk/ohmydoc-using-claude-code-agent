@@ -5,20 +5,21 @@
       v-if="error"
       color="red"
       variant="solid"
-      title="Parsing Error"
+      title="Rendering Error"
       :description="error"
       icon="i-heroicons-exclamation-triangle"
       class="error-alert"
     />
 
-    <!-- Preview Rendering -->
+    <!-- Document Preview — content is DOMPurify-sanitized before assignment to sanitizedHtml -->
+    <!-- eslint-disable vue/no-v-html -->
     <div
-      v-else-if="parsedData && templateComponent"
-      class="preview-container"
+      v-else-if="sanitizedHtml"
+      class="preview-container document-render"
       :style="containerStyle"
-    >
-      <component :is="templateComponent" :data="parsedData" />
-    </div>
+      v-html="sanitizedHtml"
+    />
+    <!-- eslint-enable vue/no-v-html -->
 
     <!-- Placeholder State -->
     <div v-else class="placeholder-state">
@@ -29,8 +30,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useTemplate } from '~/composables/useTemplate'
-import { parseXml } from '~/composables/useXmlParser'
+import './resume-styles.css'
 
 defineOptions({ name: 'PreviewPanel' })
 
@@ -41,25 +41,43 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), { zoom: 1 })
 
-const parsedData = ref<unknown>(undefined)
+const sanitizedHtml = ref<string>('')
 const error = ref<string | undefined>(undefined)
-
-const { currentTemplate: templateComponent } = useTemplate()
 
 const containerStyle = computed(() => ({
   transform: `scale(${props.zoom})`,
   transformOrigin: 'top left',
 }))
 
-function updatePreview() {
+const ALLOWED_TAGS = [
+  'document', 'header', 'name', 'contact', 'email', 'phone', 'location',
+  'linkedin', 'website', 'summary', 'experience', 'role', 'title', 'company',
+  'period', 'bullets', 'bullet', 'education', 'degree', 'school', 'year',
+  'note', 'skills', 'certifications', 'projects', 'volunteer',
+  // Standard HTML tags DOMPurify allows anyway — kept for section labels
+  'section', 'h2', 'p', 'ul', 'li', 'a', 'br', 'strong', 'em',
+]
+
+const ALLOWED_ATTR = ['type', 'href']
+
+async function updatePreview() {
   error.value = undefined
-  parsedData.value = undefined
-  const result = parseXml(props.xmlContent)
-  if (result.success && result.data) {
-    parsedData.value = result.data
+  sanitizedHtml.value = ''
+
+  if (!props.xmlContent) return
+
+  try {
+    // DOMPurify is browser-only — import lazily to avoid SSR issues
+    const DOMPurify = (await import('dompurify')).default
+    const clean = DOMPurify.sanitize(props.xmlContent, {
+      ADD_TAGS: ALLOWED_TAGS,
+      ADD_ATTR: ALLOWED_ATTR,
+      FORCE_BODY: false,
+    })
+    sanitizedHtml.value = clean
   }
-  else {
-    error.value = result.error || 'Could not parse document'
+  catch (err) {
+    error.value = err instanceof Error ? err.message : 'Could not render document'
   }
 }
 
