@@ -1,13 +1,6 @@
 <template>
   <div class="app-container">
-    <!-- AppHeader with title, tagline, and action slots -->
     <AppHeader>
-      <!-- Left action slot reserved for Format, Clear, Import buttons (MVP 8) -->
-      <template #left-actions>
-        <!-- Empty slot - will be populated in MVP 8 -->
-      </template>
-
-      <!-- Right action slot: Export PDF button -->
       <template #right-actions>
         <UButton
           size="xs"
@@ -20,51 +13,34 @@
       </template>
     </AppHeader>
 
-    <!-- Welcome Screen: shown on first load when no saved data exists -->
-    <div v-if="showWelcome" class="welcome-screen">
-      <div class="welcome-card">
-        <div class="welcome-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-        </div>
-        <h2 class="welcome-headline">
-          Create professional documents in seconds
-        </h2>
-        <p class="welcome-description">
-          Write structured XML, pick a template, and instantly preview a polished document — ready to export.
-        </p>
-        <UButton
-          size="xl"
-          color="primary"
-          class="welcome-cta"
-          :loading="isSampleLoading"
-          @click="loadSample"
-        >
-          Start with a sample
-        </UButton>
-      </div>
-    </div>
-
-    <!-- Dual-panel layout: Editor (left) and Preview (right) -->
-    <div v-else class="dual-panel-layout">
-      <!-- Left Panel: XML Editor -->
+    <!-- Dual-panel layout: Text input (left) and Preview (right) -->
+    <div class="dual-panel-layout">
+      <!-- Left Panel: Plain text input -->
       <div class="editor-panel">
-        <XmlEditor
-          v-model="xmlContent"
-          height="100%"
-          width="100%"
+        <textarea
+          v-model="textContent"
+          class="text-input"
+          :placeholder="placeholder"
         />
+        <div class="action-bar">
+          <UButton
+            :disabled="!textContent.trim() || isFormatting"
+            :loading="isFormatting"
+            @click="formatDocument"
+          >
+            {{ isFormatting ? 'Formatting...' : 'Format My Resume' }}
+          </UButton>
+        </div>
       </div>
 
       <!-- Right Panel: Preview -->
       <div class="preview-panel">
+        <div v-if="!formattedXml" class="preview-empty">
+          <p>Your formatted document will appear here.</p>
+        </div>
         <PreviewPanel
-          :xml-content="debouncedXmlContent"
+          v-else
+          :xml-content="formattedXml"
           :zoom="1"
         />
       </div>
@@ -73,137 +49,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { useDocumentType } from '~/composables/useDocumentType'
+import { ref } from 'vue'
 
-/**
- * Main Application Page - MVP 6: Dual-Panel Integration
- *
- * Features:
- * - Welcome screen on first load (no saved data in localStorage)
- * - Dual-panel 50/50 layout (CSS Grid)
- * - 300ms debounced real-time updates (per DECISIONS.md)
- * - Persists XML content to localStorage
- * - Minimum 1024px responsive design
- * - Document type switching loads the appropriate sample XML
- */
+useHead({
+  title: 'OhMyDoc',
+})
 
-const LS_KEY = 'ohmydoc_xml_content'
+const placeholder = `Paste your resume or cover letter here.
+
+Example:
+Jane Smith
+jane@email.com · Toronto, ON
+
+Software Engineer with 8 years...`
+
+const textContent = ref('')
+const formattedXml = ref('')
+const isFormatting = ref(false)
 
 function handlePrint() {
   window.print()
 }
 
-const { activeDocumentType, currentDocumentType } = useDocumentType()
-
-// Set page metadata
-useHead({
-  title: 'OhMyDoc - XML to HTML Transformer',
-})
-
-// Welcome screen is shown when no saved data exists
-const showWelcome = ref(true)
-const isSampleLoading = ref(false)
-
-// Reactive state for XML content
-const xmlContent = ref('')
-const debouncedXmlContent = ref('')
-
-// Debounce timer ref
-let debounceTimer: ReturnType<typeof setTimeout> | null = null
-
-/**
- * Debounce watcher: Updates preview 300ms after user stops typing
- * Per DECISIONS.md Decision 5: 300ms < 500ms threshold provides smooth UX
- * without feeling laggy or causing excessive re-parsing
- */
-watch(xmlContent, (newValue) => {
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
-
-  debounceTimer = setTimeout(() => {
-    debouncedXmlContent.value = newValue
-    // Persist to localStorage so returning users skip the welcome screen
-    try {
-      localStorage.setItem(LS_KEY, newValue)
-    }
-    catch {
-      // Ignore storage errors (private browsing, quota exceeded, etc.)
-    }
-  }, 300)
-})
-
-/**
- * Fetch and apply the sample XML for the active document type.
- * Called by the "Start with a sample" button and when switching document types.
- */
-async function loadSample() {
-  isSampleLoading.value = true
-  const samplePath = currentDocumentType.value?.sampleXmlPath ?? '/samples/cover-letter.xml'
+async function formatDocument() {
+  if (!textContent.value.trim() || isFormatting.value) return
+  isFormatting.value = true
   try {
-    const response = await fetch(samplePath)
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
-    const sampleXml = await response.text()
-    xmlContent.value = sampleXml
-    debouncedXmlContent.value = sampleXml
-    showWelcome.value = false
+    const result = await $fetch<{ xml: string, divergence: number, documentType: string }>('/api/format', {
+      method: 'POST',
+      body: { text: textContent.value },
+    })
+    formattedXml.value = result.xml
   }
-  catch (error) {
-    console.error('Error loading sample XML:', error)
-    // Still dismiss welcome and show an empty editor rather than getting stuck
-    showWelcome.value = false
+  catch (err) {
+    console.error('Format error:', err)
   }
   finally {
-    isSampleLoading.value = false
+    isFormatting.value = false
   }
 }
-
-/**
- * When the user switches document type from the header dropdown, load the
- * sample XML for the newly selected type so there's always a valid document
- * to preview. Only fires on explicit user action (not on initial page load).
- */
-watch(activeDocumentType, () => {
-  if (!showWelcome.value) {
-    loadSample()
-  }
-}, { immediate: false })
-
-/**
- * On mount: restore saved content from localStorage.
- * If content exists, skip the welcome screen and load it directly.
- */
-onMounted(() => {
-  try {
-    const saved = localStorage.getItem(LS_KEY)
-    if (saved) {
-      xmlContent.value = saved
-      debouncedXmlContent.value = saved
-      showWelcome.value = false
-    }
-  }
-  catch {
-    // Ignore localStorage errors; welcome screen will show as default
-  }
-})
-
-/**
- * Cleanup: Clear debounce timer on component unmount
- */
-onUnmounted(() => {
-  if (debounceTimer) {
-    clearTimeout(debounceTimer)
-  }
-})
 </script>
 
 <style scoped>
-/**
- * Main app container - full viewport height
- */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -212,56 +99,58 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/**
- * Dual-panel layout using CSS Grid
- * 50/50 split between editor (left) and preview (right)
- * Minimum width: 1024px total (512px per panel)
- */
 .dual-panel-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
   flex: 1;
   min-height: 0;
   gap: 0;
-
-  /* Minimum width constraint */
   min-width: 1024px;
 }
 
-/**
- * Left panel: XML Editor
- * Full height, scrollable if needed
- */
 .editor-panel {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: #1e1e1e; /* Dark editor background */
   border-right: 1px solid var(--color-gray-200);
-  transition: border-color 0.15s ease;
 }
 
-/**
- * Right panel: Preview
- * Full height, scrollable if needed
- */
+.text-input {
+  flex: 1;
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-gray-900);
+  background-color: #fff;
+  min-height: 0;
+}
+
+.action-bar {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-gray-200);
+  background-color: var(--color-gray-50);
+}
+
 .preview-panel {
   display: flex;
   flex-direction: column;
   overflow: auto;
   background-color: var(--color-gray-50);
-  transition: background-color 0.15s ease;
 }
 
-/**
- * Print: hide all editor chrome, show only the preview document
- *
- * - Hide header (dropdowns, buttons, title)
- * - Hide the XML editor panel
- * - Collapse the dual-panel grid to a single column
- * - Let the preview fill the full printable area
- * - @page margin (in app.vue) provides the physical page margins
- */
+.preview-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-400);
+  font-size: 0.875rem;
+}
+
 @media print {
   .app-container {
     display: block;
@@ -269,37 +158,24 @@ onUnmounted(() => {
     overflow: visible;
   }
 
-  /* Hide entire app header (title, type/template dropdowns, export button) */
   .app-header {
     display: none;
   }
 
-  /* Hide the XML editor */
   .editor-panel {
     display: none;
   }
 
-  /* Collapse the two-column grid; let preview fill the page */
   .dual-panel-layout {
     display: block;
     min-width: unset;
   }
 
-  /* Strip the preview wrapper background so only the document shows */
   .preview-panel {
     background: transparent;
   }
-
-  /* Hide the welcome screen if visible */
-  .welcome-screen {
-    display: none;
-  }
 }
 
-/**
- * Responsive design for smaller screens
- * Stack panels vertically below 1024px
- */
 @media (max-width: 1024px) {
   .dual-panel-layout {
     grid-template-columns: 1fr;
@@ -311,50 +187,5 @@ onUnmounted(() => {
     border-right: none;
     border-bottom: 1px solid var(--color-gray-300);
   }
-}
-
-/**
- * Welcome screen - shown on first load
- */
-.welcome-screen {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-gray-50);
-  padding: 2rem;
-}
-
-.welcome-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  max-width: 480px;
-  gap: 1.25rem;
-}
-
-.welcome-icon {
-  color: var(--color-primary-500, #0f6fec);
-  opacity: 0.85;
-}
-
-.welcome-headline {
-  font-size: 1.75rem;
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--color-gray-900);
-  margin: 0;
-}
-
-.welcome-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: var(--color-gray-600);
-  margin: 0;
-}
-
-.welcome-cta {
-  margin-top: 0.5rem;
 }
 </style>

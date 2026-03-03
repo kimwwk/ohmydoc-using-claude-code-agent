@@ -1,7 +1,7 @@
 <template>
   <UContainer class="app-header border-b border-gray-200 dark:border-gray-800">
     <div class="flex items-center justify-between">
-      <!-- Left action slot for future buttons (Format, Clear, Import - MVP 8) -->
+      <!-- Left action slot -->
       <div class="flex items-center gap-2">
         <slot name="left-actions" />
       </div>
@@ -13,24 +13,8 @@
         </h1>
       </div>
 
-      <!-- Right: Document type + template switchers + action slot -->
+      <!-- Right action slot -->
       <div class="flex items-center gap-3">
-        <!-- Document Type Dropdown -->
-        <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">Type</label>
-          <USelectMenu
-            v-model="selectedDocumentType"
-            :items="documentTypeOptions"
-            value-key="value"
-            label-key="label"
-            size="xs"
-            class="w-36"
-          />
-        </div>
-
-        <!-- Template Selector (visual preview cards) -->
-        <TemplateSelector />
-
         <slot name="right-actions" />
       </div>
     </div>
@@ -43,18 +27,3 @@
   padding-bottom: 0.5rem;
 }
 </style>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useDocumentType } from '~/composables/useDocumentType'
-
-const { activeDocumentType, setActiveDocumentType, getAvailableDocumentTypes } = useDocumentType()
-
-// Document type options (static — registry doesn't change at runtime)
-const documentTypeOptions = getAvailableDocumentTypes().map(d => ({ label: d.displayName, value: d.name }))
-
-const selectedDocumentType = computed({
-  get: () => activeDocumentType.value,
-  set: (val: string) => setActiveDocumentType(val),
-})
-</script>
