@@ -1,0 +1,222 @@
+/**
+ * Resume / Cover Letter Render Styles
+ *
+ * Styles the custom XML elements produced by the AI pipeline:
+ *   <document>, <header>, <name>, <contact>, <experience>, etc.
+ *
+ * These custom elements are rendered as HTML via DOMPurify + v-html.
+ * The browser treats unknown elements as inline by default, so each
+ * element that needs block-level layout must have display set explicitly.
+ *
+ * Design system:
+ *   --ink:    #111  (body text)
+ *   --muted:  #555  (secondary text)
+ *   --accent: #0f6fec (links / accent)
+ *   --font-body: ui-serif, Georgia, serif
+ *   --font-ui:   ui-sans-serif, system-ui, sans-serif
+ */
+
+/* ── Custom element resets ── */
+document, header, name, contact,
+email, phone, location, linkedin, website,
+summary, experience, role, title, company, period,
+bullets, bullet, education, degree, school, year, note,
+skills, certifications, projects, volunteer {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Wrapper applied to the rendered content via .document-render ── */
+.document-render {
+  font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #111;
+  background: #fff;
+}
+
+/* ── document root ── */
+.document-render document {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  background: #fff;
+}
+
+/* ── header block ── */
+.document-render header {
+  border-bottom: 2px solid #111;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── applicant name ── */
+.document-render name {
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: clamp(1.4rem, 2vw + 1rem, 2rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+/* ── contact row ── */
+.document-render contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.document-render email,
+.document-render phone,
+.document-render location,
+.document-render linkedin,
+.document-render website {
+  display: inline;
+}
+
+/* ── section labels via pseudo-elements ── */
+.document-render summary::before,
+.document-render experience::before,
+.document-render education::before,
+.document-render skills::before,
+.document-render certifications::before,
+.document-render projects::before,
+.document-render volunteer::before {
+  display: block;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.75rem;
+}
+
+.document-render summary::before    { content: "Summary"; }
+.document-render experience::before { content: "Experience"; }
+.document-render education::before  { content: "Education"; }
+.document-render skills::before     { content: "Skills"; }
+.document-render certifications::before { content: "Certifications"; }
+.document-render projects::before   { content: "Projects"; }
+.document-render volunteer::before  { content: "Volunteer"; }
+
+/* ── section spacing ── */
+.document-render summary,
+.document-render experience,
+.document-render education,
+.document-render skills,
+.document-render certifications,
+.document-render projects,
+.document-render volunteer {
+  margin-bottom: 1.5rem;
+}
+
+/* ── summary paragraph text ── */
+.document-render summary {
+  color: #111;
+}
+
+/* ── experience roles ── */
+.document-render role {
+  margin-bottom: 1.25rem;
+}
+
+.document-render role:last-child {
+  margin-bottom: 0;
+}
+
+.document-render title {
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.document-render company {
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.document-render period {
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  color: #777;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+/* ── bullets list ── */
+.document-render bullets {
+  padding-left: 1.5rem;
+  margin-top: 0.4rem;
+}
+
+.document-render bullet {
+  display: list-item;
+  list-style-type: disc;
+  color: #111;
+  margin-bottom: 0.2rem;
+  line-height: 1.5;
+}
+
+/* ── education ── */
+.document-render degree {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #111;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+.document-render school,
+.document-render year,
+.document-render note {
+  color: #555;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+}
+
+/* ── flat text sections ── */
+.document-render skills,
+.document-render certifications,
+.document-render projects,
+.document-render volunteer {
+  color: #111;
+  line-height: 1.7;
+}
+
+/* ── Print ── */
+@media print {
+  .document-render document {
+    padding: 0;
+    max-width: none;
+    margin: 0;
+  }
+
+  .document-render role,
+  .document-render education {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+/* ── Responsive ── */
+@media screen and (max-width: 768px) {
+  .document-render document {
+    padding: 1rem 0.75rem;
+  }
+
+  .document-render name {
+    font-size: 1.5rem;
+  }
+
+  .document-render contact {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+}

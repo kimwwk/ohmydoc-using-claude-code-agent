@@ -375,7 +375,7 @@ test.describe('Task 2: XML Parser - UI Interactions', () => {
     await page.goto('/debug/parser');
 
     // Check for loading alert (might be brief)
-    const loadingAlert = page.locator('[role="alert"]:has-text("Loading Sample XML")');
+    const _loadingAlert = page.locator('[role="alert"]:has-text("Loading Sample XML")');
     // Loading alert may disappear quickly, so we just check page loads
     await page.waitForLoadState('networkidle');
 

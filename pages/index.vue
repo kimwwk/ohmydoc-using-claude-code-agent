@@ -35,14 +35,49 @@
 
       <!-- Right Panel: Preview -->
       <div class="preview-panel">
-        <div v-if="!formattedXml" class="preview-empty">
+        <!-- Skeleton loading state -->
+        <div v-if="isFormatting" class="skeleton-wrapper">
+          <div class="skeleton skeleton-name" />
+          <div class="skeleton skeleton-contact" />
+          <div class="skeleton-divider" />
+          <div class="skeleton skeleton-line" />
+          <div class="skeleton skeleton-line skeleton-line--short" />
+          <div class="skeleton skeleton-line" />
+          <div class="skeleton-gap" />
+          <div class="skeleton skeleton-heading" />
+          <div class="skeleton skeleton-line" />
+          <div class="skeleton skeleton-line skeleton-line--medium" />
+          <div class="skeleton skeleton-line" />
+          <div class="skeleton skeleton-line skeleton-line--short" />
+          <div class="skeleton-gap" />
+          <div class="skeleton skeleton-heading" />
+          <div class="skeleton skeleton-line skeleton-line--medium" />
+          <div class="skeleton skeleton-line skeleton-line--short" />
+        </div>
+
+        <!-- Error state -->
+        <div v-else-if="formatError" class="error-state">
+          <p class="error-message">{{ formatError }}</p>
+          <UButton variant="outline" @click="formatDocument">
+            Try Again
+          </UButton>
+        </div>
+
+        <!-- Empty state -->
+        <div v-else-if="!formattedXml" class="preview-empty">
           <p>Your formatted document will appear here.</p>
         </div>
-        <PreviewPanel
-          v-else
-          :xml-content="formattedXml"
-          :zoom="1"
-        />
+
+        <!-- Preview + badge -->
+        <template v-else>
+          <PreviewPanel
+            :xml-content="formattedXml"
+            :zoom="1"
+          />
+          <div v-if="documentType" class="document-badge">
+            {{ documentType === 'resume' ? 'Resume detected' : 'Cover letter detected' }} ✓
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -66,6 +101,8 @@ Software Engineer with 8 years...`
 const textContent = ref('')
 const formattedXml = ref('')
 const isFormatting = ref(false)
+const formatError = ref('')
+const documentType = ref('')
 
 function handlePrint() {
   window.print()
@@ -74,15 +111,21 @@ function handlePrint() {
 async function formatDocument() {
   if (!textContent.value.trim() || isFormatting.value) return
   isFormatting.value = true
+  formatError.value = ''
+  formattedXml.value = ''
+  documentType.value = ''
+
   try {
     const result = await $fetch<{ xml: string, divergence: number, documentType: string }>('/api/format', {
       method: 'POST',
       body: { text: textContent.value },
     })
     formattedXml.value = result.xml
+    documentType.value = result.documentType
   }
-  catch (err) {
-    console.error('Format error:', err)
+  catch (err: unknown) {
+    const message = (err as { data?: { message?: string } })?.data?.message
+    formatError.value = message || 'Something went wrong. Please try again.'
   }
   finally {
     isFormatting.value = false
@@ -140,6 +183,7 @@ async function formatDocument() {
   flex-direction: column;
   overflow: auto;
   background-color: var(--color-gray-50);
+  position: relative;
 }
 
 .preview-empty {
@@ -149,6 +193,106 @@ async function formatDocument() {
   justify-content: center;
   color: var(--color-gray-400);
   font-size: 0.875rem;
+}
+
+/* ── Skeleton loading UI ── */
+.skeleton-wrapper {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 25%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton-name {
+  height: 2rem;
+  width: 55%;
+  margin-bottom: 0.25rem;
+}
+
+.skeleton-contact {
+  height: 1rem;
+  width: 70%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-divider {
+  height: 2px;
+  background: var(--color-gray-200);
+  margin: 0.75rem 0;
+  border-radius: 0;
+}
+
+.skeleton-line {
+  height: 0.875rem;
+  width: 100%;
+}
+
+.skeleton-line--short {
+  width: 55%;
+}
+
+.skeleton-line--medium {
+  width: 75%;
+}
+
+.skeleton-gap {
+  height: 1rem;
+}
+
+.skeleton-heading {
+  height: 1rem;
+  width: 30%;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Error state ── */
+.error-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.error-message {
+  color: var(--color-red-600);
+  font-size: 0.9rem;
+  text-align: center;
+  max-width: 320px;
+}
+
+/* ── Document type badge ── */
+.document-badge {
+  position: sticky;
+  bottom: 0;
+  align-self: flex-start;
+  margin: 0 1.25rem 1rem;
+  padding: 0.35rem 0.75rem;
+  background: #ecfdf5;
+  color: #065f46;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid #6ee7b7;
 }
 
 @media print {
@@ -173,6 +317,10 @@ async function formatDocument() {
 
   .preview-panel {
     background: transparent;
+  }
+
+  .document-badge {
+    display: none;
   }
 }
 

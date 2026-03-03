@@ -6,5 +6,9 @@ export default defineNuxtConfig({
 
   devServer: {
     port: 3002
-  }
+  },
+
+  runtimeConfig: {
+    openaiApiKey: process.env.OPENAI_API_KEY || '',
+  },
 })
