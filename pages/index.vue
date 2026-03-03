@@ -1,42 +1,55 @@
 <template>
   <div class="app-container">
-    <AppHeader>
+    <AppHeader class="app-header no-print">
       <template #right-actions>
-        <UButton
-          size="xs"
-          variant="outline"
-          icon="i-heroicons-printer"
-          @click="handlePrint"
-        >
-          Export PDF
-        </UButton>
+        <div class="export-area no-print">
+          <div v-if="showDivergenceWarning" class="divergence-warning">
+            ⚠ Some content may have been changed during formatting. Please review carefully before exporting.
+          </div>
+          <UButton
+            size="xs"
+            variant="outline"
+            icon="i-heroicons-printer"
+            :disabled="!formattedXml"
+            @click="handlePrint"
+          >
+            Export PDF
+          </UButton>
+          <span class="export-hint">Works best in Chrome. In the print dialog, choose 'Save as PDF'.</span>
+        </div>
       </template>
     </AppHeader>
 
     <!-- Dual-panel layout: Text input (left) and Preview (right) -->
     <div class="dual-panel-layout">
       <!-- Left Panel: Plain text input -->
-      <div class="editor-panel">
+      <div class="editor-panel no-print">
         <textarea
           v-model="textContent"
           class="text-input"
           :placeholder="placeholder"
+          :disabled="isFormatting"
         />
         <div class="action-bar">
-          <UButton
-            :disabled="!textContent.trim() || isFormatting"
-            :loading="isFormatting"
-            @click="formatDocument"
-          >
-            {{ isFormatting ? 'Formatting...' : 'Format My Resume' }}
-          </UButton>
+          <div class="action-row">
+            <UButton
+              :disabled="!textContent.trim() || isFormatting"
+              :loading="isFormatting"
+              @click="formatDocument"
+            >
+              {{ isFormatting ? 'Formatting...' : 'Format My Resume' }}
+            </UButton>
+            <p v-if="validationMessage" class="validation-message">
+              {{ validationMessage }}
+            </p>
+          </div>
         </div>
       </div>
 
       <!-- Right Panel: Preview -->
       <div class="preview-panel">
         <!-- Skeleton loading state -->
-        <div v-if="isFormatting" class="skeleton-wrapper">
+        <div v-if="isFormatting" class="skeleton-wrapper no-print">
           <div class="skeleton skeleton-name" />
           <div class="skeleton skeleton-contact" />
           <div class="skeleton-divider" />
@@ -56,7 +69,7 @@
         </div>
 
         <!-- Error state -->
-        <div v-else-if="formatError" class="error-state">
+        <div v-else-if="formatError" class="error-state no-print">
           <p class="error-message">{{ formatError }}</p>
           <UButton variant="outline" @click="formatDocument">
             Try Again
@@ -64,18 +77,18 @@
         </div>
 
         <!-- Empty state -->
-        <div v-else-if="!formattedXml" class="preview-empty">
+        <div v-else-if="!formattedXml" class="preview-empty no-print">
           <p>Your formatted document will appear here.</p>
         </div>
 
-        <!-- Preview + badge -->
+        <!-- Preview + review note -->
         <template v-else>
           <PreviewPanel
             :xml-content="formattedXml"
             :zoom="1"
           />
-          <div v-if="documentType" class="document-badge">
-            {{ documentType === 'resume' ? 'Resume detected' : 'Cover letter detected' }} ✓
+          <div class="review-note no-print">
+            Your content has been formatted but not rewritten. Please review before exporting.
           </div>
         </template>
       </div>
@@ -84,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 useHead({
   title: 'OhMyDoc',
@@ -103,17 +116,32 @@ const formattedXml = ref('')
 const isFormatting = ref(false)
 const formatError = ref('')
 const documentType = ref('')
+const divergence = ref(0)
+const validationMessage = ref('')
+
+const showDivergenceWarning = computed(() => formattedXml.value && divergence.value > 0.05)
 
 function handlePrint() {
   window.print()
 }
 
 async function formatDocument() {
-  if (!textContent.value.trim() || isFormatting.value) return
+  validationMessage.value = ''
+
+  if (!textContent.value.trim()) return
+
+  if (textContent.value.trim().length < 50) {
+    validationMessage.value = 'Please paste at least 50 characters of content to format.'
+    return
+  }
+
+  if (isFormatting.value) return
+
   isFormatting.value = true
   formatError.value = ''
   formattedXml.value = ''
   documentType.value = ''
+  divergence.value = 0
 
   try {
     const result = await $fetch<{ xml: string, divergence: number, documentType: string }>('/api/format', {
@@ -122,8 +150,13 @@ async function formatDocument() {
     })
     formattedXml.value = result.xml
     documentType.value = result.documentType
+    divergence.value = result.divergence
   }
   catch (err: unknown) {
+    const raw = (err as { data?: { rawResponse?: string } })?.data?.rawResponse
+    if (raw) {
+      console.error('[OhMyDoc] Raw AI response (malformed XML):', raw)
+    }
     const message = (err as { data?: { message?: string } })?.data?.message
     formatError.value = message || 'Something went wrong. Please try again.'
   }
@@ -172,10 +205,27 @@ async function formatDocument() {
   min-height: 0;
 }
 
+.text-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .action-bar {
   padding: 0.75rem 1.25rem;
   border-top: 1px solid var(--color-gray-200);
   background-color: var(--color-gray-50);
+}
+
+.action-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.validation-message {
+  font-size: 0.8rem;
+  color: var(--color-amber-600, #d97706);
 }
 
 .preview-panel {
@@ -280,34 +330,52 @@ async function formatDocument() {
   max-width: 320px;
 }
 
-/* ── Document type badge ── */
-.document-badge {
-  position: sticky;
-  bottom: 0;
-  align-self: flex-start;
-  margin: 0 1.25rem 1rem;
-  padding: 0.35rem 0.75rem;
-  background: #ecfdf5;
-  color: #065f46;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border-radius: 9999px;
-  border: 1px solid #6ee7b7;
+/* ── Review / mutation note ── */
+.review-note {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+  text-align: center;
 }
 
+/* ── Export area in header ── */
+.export-area {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.export-hint {
+  font-size: 0.7rem;
+  color: var(--color-gray-400);
+  white-space: nowrap;
+}
+
+/* ── Divergence / mutation warning ── */
+.divergence-warning {
+  font-size: 0.75rem;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  max-width: 360px;
+}
+
+/* ── Print ── */
 @media print {
+  .no-print {
+    display: none !important;
+  }
+
   .app-container {
     display: block;
     height: auto;
     overflow: visible;
-  }
-
-  .app-header {
-    display: none;
-  }
-
-  .editor-panel {
-    display: none;
   }
 
   .dual-panel-layout {
@@ -317,10 +385,7 @@ async function formatDocument() {
 
   .preview-panel {
     background: transparent;
-  }
-
-  .document-badge {
-    display: none;
+    overflow: visible;
   }
 }
 
