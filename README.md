@@ -73,3 +73,7 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Testing
+
+Regression tests live in the [ohmydoc-qa](https://github.com/chillkimtest-oss/ohmydoc-qa) repo.
