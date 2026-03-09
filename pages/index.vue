@@ -3,8 +3,8 @@
     <AppHeader class="app-header no-print">
       <template #right-actions>
         <div class="export-area no-print">
-          <div v-if="showDivergenceWarning" class="divergence-warning">
-            ⚠ Some content may have been changed during formatting. Please review carefully before exporting.
+          <div v-if="showDivergenceWarning" class="divergence-info">
+            ℹ Formatting was applied — please review before exporting.
           </div>
           <UButton
             size="xs"
@@ -222,6 +222,7 @@ async function formatDocument() {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  background: #f1f5f9;
 }
 
 .dual-panel-layout {
@@ -233,11 +234,14 @@ async function formatDocument() {
   min-width: 1024px;
 }
 
+/* ── Left panel (editor) ── */
 .editor-panel {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-right: 1px solid var(--color-gray-200);
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  box-shadow: 1px 0 0 0 #e2e8f0;
 }
 
 .text-input {
@@ -245,13 +249,17 @@ async function formatDocument() {
   resize: none;
   border: none;
   outline: none;
-  padding: 1.25rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  padding: 1.5rem;
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--color-gray-900);
+  line-height: 1.7;
+  color: #1e293b;
   background-color: #fff;
   min-height: 0;
+}
+
+.text-input::placeholder {
+  color: #94a3b8;
 }
 
 .text-input:disabled {
@@ -259,42 +267,43 @@ async function formatDocument() {
   cursor: not-allowed;
 }
 
+/* ── Action bar ── */
 .action-bar {
-  padding: 0.75rem 1.25rem;
-  border-top: 1px solid var(--color-gray-200);
-  background-color: var(--color-gray-50);
+  padding: 0.875rem 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.625rem;
 }
 
 .type-selector {
   display: flex;
   gap: 0;
   width: fit-content;
-  border: 1px solid var(--color-gray-300);
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
   overflow: hidden;
 }
 
 .type-btn {
-  padding: 0.3rem 0.85rem;
-  font-size: 0.8rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   border: none;
   background: #fff;
-  color: var(--color-gray-600);
+  color: #64748b;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s;
   line-height: 1.5;
 }
 
 .type-btn:first-child {
-  border-right: 1px solid var(--color-gray-300);
+  border-right: 1px solid #cbd5e1;
 }
 
 .type-btn--active {
-  background-color: var(--color-gray-900);
+  background-color: #0f172a;
   color: #fff;
 }
 
@@ -304,7 +313,7 @@ async function formatDocument() {
 }
 
 .type-btn:not(:disabled):not(.type-btn--active):hover {
-  background-color: var(--color-gray-100);
+  background-color: #f1f5f9;
 }
 
 .action-row {
@@ -316,14 +325,15 @@ async function formatDocument() {
 
 .validation-message {
   font-size: 0.8rem;
-  color: var(--color-amber-600, #d97706);
+  color: #b45309;
 }
 
+/* ── Right panel (preview canvas) ── */
 .preview-panel {
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background-color: var(--color-gray-50);
+  background-color: #e2e8f0;
   position: relative;
 }
 
@@ -334,14 +344,14 @@ async function formatDocument() {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  color: var(--color-gray-400);
+  color: #94a3b8;
   font-size: 0.875rem;
 }
 
 .empty-hint {
   margin-top: 0.5rem;
   font-size: 0.8rem;
-  color: var(--color-gray-400);
+  color: #94a3b8;
 }
 
 .sample-buttons {
@@ -351,16 +361,17 @@ async function formatDocument() {
   justify-content: center;
 }
 
+/* ── Sample row (inline links under format button) ── */
 .sample-row {
   display: flex;
   align-items: center;
   gap: 0.3rem;
   font-size: 0.78rem;
-  color: var(--color-gray-400);
+  color: #94a3b8;
 }
 
 .sample-label {
-  color: var(--color-gray-400);
+  color: #94a3b8;
 }
 
 .sample-link {
@@ -368,14 +379,14 @@ async function formatDocument() {
   border: none;
   padding: 0;
   font-size: 0.78rem;
-  color: var(--color-gray-500);
+  color: #64748b;
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .sample-link:hover:not(:disabled) {
-  color: var(--color-gray-800);
+  color: #0f172a;
 }
 
 .sample-link:disabled {
@@ -384,7 +395,7 @@ async function formatDocument() {
 }
 
 .sample-sep {
-  color: var(--color-gray-300);
+  color: #cbd5e1;
 }
 
 /* ── Skeleton loading UI ── */
@@ -393,18 +404,23 @@ async function formatDocument() {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  /* Skeleton sits inside the preview canvas, give it document-like background */
+  background: #fff;
+  margin: 1.5rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px 0 rgba(15, 23, 42, 0.08);
 }
 
 .skeleton {
   background: linear-gradient(
     90deg,
-    var(--color-gray-200) 25%,
-    var(--color-gray-100) 50%,
-    var(--color-gray-200) 75%
+    #e2e8f0 25%,
+    #f1f5f9 50%,
+    #e2e8f0 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 @keyframes shimmer {
@@ -426,7 +442,7 @@ async function formatDocument() {
 
 .skeleton-divider {
   height: 2px;
-  background: var(--color-gray-200);
+  background: #e2e8f0;
   margin: 0.75rem 0;
   border-radius: 0;
 }
@@ -466,20 +482,21 @@ async function formatDocument() {
 }
 
 .error-message {
-  color: var(--color-red-600);
+  color: #dc2626;
   font-size: 0.9rem;
   text-align: center;
   max-width: 320px;
 }
 
-/* ── Review / mutation note ── */
+/* ── Review note (shown below preview when document is rendered) ── */
 .review-note {
   padding: 0.6rem 1.25rem;
   font-size: 0.75rem;
-  color: var(--color-gray-500);
-  background: var(--color-gray-50);
-  border-top: 1px solid var(--color-gray-200);
+  color: #64748b;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
   text-align: center;
+  flex-shrink: 0;
 }
 
 /* ── Export area in header ── */
@@ -493,16 +510,16 @@ async function formatDocument() {
 
 .export-hint {
   font-size: 0.7rem;
-  color: var(--color-gray-400);
+  color: #94a3b8;
   white-space: nowrap;
 }
 
-/* ── Divergence / mutation warning ── */
-.divergence-warning {
+/* ── Divergence info (subtle, not alarming) ── */
+.divergence-info {
   font-size: 0.75rem;
-  color: #92400e;
-  background: #fef3c7;
-  border: 1px solid #fcd34d;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
   border-radius: 4px;
   padding: 0.3rem 0.6rem;
   max-width: 360px;
@@ -518,6 +535,7 @@ async function formatDocument() {
     display: block;
     height: auto;
     overflow: visible;
+    background: transparent;
   }
 
   .dual-panel-layout {
@@ -540,7 +558,7 @@ async function formatDocument() {
 
   .editor-panel {
     border-right: none;
-    border-bottom: 1px solid var(--color-gray-300);
+    border-bottom: 1px solid #e2e8f0;
   }
 }
 </style>
