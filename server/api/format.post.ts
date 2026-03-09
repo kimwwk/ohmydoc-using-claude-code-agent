@@ -1,8 +1,8 @@
 import { Parser } from 'htmlparser2'
 
-const SYSTEM_PROMPT = `You are a professional document formatter. Convert plain-text resumes and cover letters into structured XML.
+const RESUME_SYSTEM_PROMPT = `You are a professional document formatter. Convert plain-text resumes into structured XML.
 
-For resumes use this schema:
+Use this schema:
 <document type="resume">
   <header>
     <name>Full Name</name>
@@ -37,13 +37,45 @@ For resumes use this schema:
   <volunteer>Volunteer experience</volunteer>
 </document>
 
-For cover letters use type="cover-letter" and adapt content into letter sections using summary (opening), experience (body paragraphs), and closing elements.
-
 Rules:
 - Preserve ALL information from the source text
 - Omit empty optional tags
-- Output ONLY valid XML — no markdown fences, no explanation
-- Detect whether the input is a resume or cover letter and set the type attribute accordingly`
+- Output ONLY valid XML — no markdown fences, no explanation`
+
+const LETTER_SYSTEM_PROMPT = `You are a professional document formatter. Convert plain-text cover letters or letters into structured XML.
+
+Use this schema:
+<document type="cover-letter">
+  <header>
+    <name>Sender Full Name</name>
+    <contact>
+      <email>email@example.com</email>
+      <phone>555-000-0000</phone>
+      <location>City, State</location>
+    </contact>
+  </header>
+  <date>Month Day, Year</date>
+  <recipient>
+    <name>Recipient Name</name>
+    <title>Recipient Title</title>
+    <company>Company Name</company>
+    <address>City, State</address>
+  </recipient>
+  <greeting>Dear Hiring Manager,</greeting>
+  <body>
+    <paragraph>Opening paragraph text.</paragraph>
+    <paragraph>Body paragraph text.</paragraph>
+    <paragraph>Closing paragraph text.</paragraph>
+  </body>
+  <closing>Sincerely,</closing>
+  <signature>Sender Full Name</signature>
+</document>
+
+Rules:
+- Preserve ALL information from the source text
+- Split letter body into logical paragraphs
+- Omit empty optional tags (e.g. omit <date> if no date found, omit recipient <name> if unknown)
+- Output ONLY valid XML — no markdown fences, no explanation`
 
 interface OpenAIChatResponse {
   choices: Array<{
@@ -105,6 +137,10 @@ export default defineEventHandler(async (event) => {
 
   const inputLen = body.text.length
 
+  // Select system prompt based on client-supplied docType; fall back to resume
+  const docType: string = body.docType === 'letter' ? 'letter' : 'resume'
+  const systemPrompt = docType === 'letter' ? LETTER_SYSTEM_PROMPT : RESUME_SYSTEM_PROMPT
+
   const response = await $fetch<OpenAIChatResponse>('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -114,7 +150,7 @@ export default defineEventHandler(async (event) => {
     body: {
       model: 'gpt-4o-mini',
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: body.text },
       ],
       temperature: 0.3,
