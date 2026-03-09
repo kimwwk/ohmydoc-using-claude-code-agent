@@ -31,13 +31,31 @@
           :disabled="isFormatting"
         />
         <div class="action-bar">
+          <div class="type-selector">
+            <button
+              class="type-btn"
+              :class="{ 'type-btn--active': selectedDocType === 'resume' }"
+              :disabled="isFormatting"
+              @click="selectedDocType = 'resume'"
+            >
+              Resume
+            </button>
+            <button
+              class="type-btn"
+              :class="{ 'type-btn--active': selectedDocType === 'letter' }"
+              :disabled="isFormatting"
+              @click="selectedDocType = 'letter'"
+            >
+              Letter
+            </button>
+          </div>
           <div class="action-row">
             <UButton
               :disabled="!textContent.trim() || isFormatting"
               :loading="isFormatting"
               @click="formatDocument"
             >
-              {{ isFormatting ? 'Formatting...' : 'Format My Resume' }}
+              {{ isFormatting ? 'Formatting...' : formatButtonLabel }}
             </UButton>
             <p v-if="validationMessage" class="validation-message">
               {{ validationMessage }}
@@ -118,6 +136,11 @@ const formatError = ref('')
 const documentType = ref('')
 const divergence = ref(0)
 const validationMessage = ref('')
+const selectedDocType = ref<'resume' | 'letter'>('resume')
+
+const formatButtonLabel = computed(() =>
+  selectedDocType.value === 'letter' ? 'Format My Letter' : 'Format My Resume',
+)
 
 const showDivergenceWarning = computed(() => formattedXml.value && divergence.value > 0.05)
 
@@ -146,7 +169,7 @@ async function formatDocument() {
   try {
     const result = await $fetch<{ xml: string, divergence: number, documentType: string }>('/api/format', {
       method: 'POST',
-      body: { text: textContent.value },
+      body: { text: textContent.value, docType: selectedDocType.value },
     })
     formattedXml.value = result.xml
     documentType.value = result.documentType
@@ -214,6 +237,48 @@ async function formatDocument() {
   padding: 0.75rem 1.25rem;
   border-top: 1px solid var(--color-gray-200);
   background-color: var(--color-gray-50);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.type-selector {
+  display: flex;
+  gap: 0;
+  width: fit-content;
+  border: 1px solid var(--color-gray-300);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.type-btn {
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  background: #fff;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  line-height: 1.5;
+}
+
+.type-btn:first-child {
+  border-right: 1px solid var(--color-gray-300);
+}
+
+.type-btn--active {
+  background-color: var(--color-gray-900);
+  color: #fff;
+}
+
+.type-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.type-btn:not(:disabled):not(.type-btn--active):hover {
+  background-color: var(--color-gray-100);
 }
 
 .action-row {

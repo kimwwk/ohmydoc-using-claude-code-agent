@@ -50,10 +50,13 @@ const containerStyle = computed(() => ({
 }))
 
 const ALLOWED_TAGS = [
+  // Resume elements
   'document', 'header', 'name', 'contact', 'email', 'phone', 'location',
   'linkedin', 'website', 'summary', 'experience', 'role', 'title', 'company',
   'period', 'bullets', 'bullet', 'education', 'degree', 'school', 'year',
   'note', 'skills', 'certifications', 'projects', 'volunteer',
+  // Cover-letter elements
+  'date', 'recipient', 'greeting', 'body', 'paragraph', 'closing', 'signature',
   // Standard HTML tags DOMPurify allows anyway — kept for section labels
   'section', 'h2', 'p', 'ul', 'li', 'a', 'br', 'strong', 'em',
 ]
