@@ -61,6 +61,12 @@
               {{ validationMessage }}
             </p>
           </div>
+          <div class="sample-row">
+            <span class="sample-label">Try a sample:</span>
+            <button class="sample-link" :disabled="isFormatting" @click="loadSample('resume')">Resume</button>
+            <span class="sample-sep">·</span>
+            <button class="sample-link" :disabled="isFormatting" @click="loadSample('letter')">Letter</button>
+          </div>
         </div>
       </div>
 
@@ -97,6 +103,17 @@
         <!-- Empty state -->
         <div v-else-if="!formattedXml" class="preview-empty no-print">
           <p>Your formatted document will appear here.</p>
+          <p class="empty-hint">
+            New here? Try a sample:
+          </p>
+          <div class="sample-buttons">
+            <UButton variant="outline" size="sm" :disabled="isFormatting" @click="loadSample('resume')">
+              Try Resume Sample
+            </UButton>
+            <UButton variant="outline" size="sm" :disabled="isFormatting" @click="loadSample('letter')">
+              Try Letter Sample
+            </UButton>
+          </div>
         </div>
 
         <!-- Preview + review note -->
@@ -146,6 +163,15 @@ const showDivergenceWarning = computed(() => formattedXml.value && divergence.va
 
 function handlePrint() {
   window.print()
+}
+
+async function loadSample(type: 'resume' | 'letter') {
+  const filename = type === 'resume' ? 'resume-sample.txt' : 'letter-sample.txt'
+  const response = await fetch(`/samples/${filename}`)
+  const text = await response.text()
+  textContent.value = text
+  selectedDocType.value = type
+  formatDocument()
 }
 
 async function formatDocument() {
@@ -304,10 +330,61 @@ async function formatDocument() {
 .preview-empty {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   color: var(--color-gray-400);
   font-size: 0.875rem;
+}
+
+.empty-hint {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-gray-400);
+}
+
+.sample-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sample-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--color-gray-400);
+}
+
+.sample-label {
+  color: var(--color-gray-400);
+}
+
+.sample-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--color-gray-500);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sample-link:hover:not(:disabled) {
+  color: var(--color-gray-800);
+}
+
+.sample-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sample-sep {
+  color: var(--color-gray-300);
 }
 
 /* ── Skeleton loading UI ── */

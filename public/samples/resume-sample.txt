@@ -1,0 +1,40 @@
+Alex Morgan
+alex.morgan@email.com | (416) 555-0182 | Toronto, ON | linkedin.com/in/alexmorgan
+
+Senior Software Engineer with 7 years of experience building scalable web applications and APIs. Passionate about developer experience, clean architecture, and mentoring junior engineers.
+
+EXPERIENCE
+
+Senior Software Engineer — Shopify
+March 2021 – Present
+- Led migration of core checkout service from monolith to microservices, reducing p99 latency by 40%
+- Mentored 4 junior engineers through onboarding, code review, and career development
+- Designed and implemented real-time inventory sync feature serving 500K+ merchants
+- Drove adoption of TypeScript across 3 teams, eliminating 85% of runtime type errors
+
+Software Engineer — Wave Financial
+June 2018 – February 2021
+- Built automated reconciliation system processing $2B+ in transactions monthly
+- Improved API test coverage from 42% to 91%, reducing production incidents by 60%
+- Collaborated with design team to rebuild accounting dashboard, increasing user retention 23%
+- Optimized database queries, reducing report generation time from 12s to under 1.5s
+
+Junior Developer — FreshBooks
+September 2016 – May 2018
+- Developed new invoice customization features used by 200K+ small business customers
+- Fixed 150+ bugs across billing and payment systems in first year
+- Participated in on-call rotation, maintaining 99.9% uptime SLA
+
+EDUCATION
+
+Bachelor of Science, Computer Science
+University of Waterloo — 2016
+Dean's Honour List
+
+SKILLS
+
+JavaScript, TypeScript, Python, Ruby, Go, React, Node.js, PostgreSQL, Redis, AWS, Docker, Kubernetes, REST APIs, GraphQL, Git
+
+CERTIFICATIONS
+
+AWS Certified Solutions Architect – Associate (2022)

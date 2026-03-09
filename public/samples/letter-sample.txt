@@ -1,0 +1,23 @@
+Jane Park
+jane.park@email.com | (647) 555-0290 | Vancouver, BC
+
+March 9, 2026
+
+Hiring Manager
+Acme Technology
+San Francisco, CA
+
+Dear Hiring Manager,
+
+I am writing to apply for the Product Designer position at Acme Technology. With five years of experience crafting user-centered digital products for startups and enterprise clients, I am excited by Acme's mission to make software more accessible for everyone.
+
+At Stripe, I led the redesign of the payment onboarding flow, reducing drop-off by 34% and improving first-payment conversion by 22%. I worked closely with engineering and product teams using Figma, conducting usability testing with 12+ participants per sprint cycle. My work earned an internal Design Excellence Award in 2024.
+
+Previously at Hootsuite, I redesigned the mobile scheduling experience for 18 million users, delivering a 4.8-star App Store rating after launch. I built and maintained the company's first design system, enabling 3 product teams to ship features 40% faster.
+
+I admire Acme's recent launch of the accessibility-first design toolkit and would love to contribute to this work. My background in inclusive design and WCAG compliance aligns closely with your team's values.
+
+Thank you for your time and consideration. I would welcome the chance to discuss how I can contribute to Acme's product vision. Please find my portfolio attached.
+
+Sincerely,
+Jane Park
