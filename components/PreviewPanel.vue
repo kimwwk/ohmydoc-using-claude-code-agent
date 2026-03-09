@@ -92,8 +92,8 @@ watch(() => props.xmlContent, updatePreview, { immediate: true })
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: var(--color-gray-50);
-  padding: 1.5rem 1.25rem;
+  background: transparent;
+  padding: 1.5rem;
 }
 
 .error-alert {
@@ -105,7 +105,7 @@ watch(() => props.xmlContent, updatePreview, { immediate: true })
   align-items: center;
   justify-content: center;
   min-height: 200px;
-  color: var(--color-gray-600);
+  color: #94a3b8;
 }
 
 .preview-container {

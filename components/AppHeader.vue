@@ -1,29 +1,63 @@
 <template>
-  <UContainer class="app-header border-b border-gray-200 dark:border-gray-800">
-    <div class="flex items-center justify-between">
-      <!-- Left action slot -->
-      <div class="flex items-center gap-2">
-        <slot name="left-actions" />
-      </div>
-
-      <!-- App Title -->
-      <div class="text-center">
-        <h1 class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white">
-          OhMyDoc
-        </h1>
+  <header class="app-header">
+    <div class="header-inner">
+      <!-- Brand -->
+      <div class="brand">
+        <span class="brand-name">OhMyDoc</span>
+        <span class="brand-tagline">Paste your resume or letter — get clean, professional formatting</span>
       </div>
 
       <!-- Right action slot -->
-      <div class="flex items-center gap-3">
+      <div class="header-right">
         <slot name="right-actions" />
       </div>
     </div>
-  </UContainer>
+  </header>
 </template>
 
 <style scoped>
 .app-header {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  padding: 0.625rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.brand-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f8fafc;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.brand-tagline {
+  font-size: 0.75rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 </style>

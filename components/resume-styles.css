@@ -45,6 +45,8 @@ date, recipient, greeting, body, paragraph, closing, signature {
   margin: 0 auto;
   padding: 48px 64px;
   background: #fff;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 4px 16px 0 rgba(15, 23, 42, 0.06);
+  border-radius: 2px;
 }
 
 /* ── header block ── */
