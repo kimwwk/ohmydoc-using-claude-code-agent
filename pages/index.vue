@@ -22,51 +22,90 @@
 
     <!-- Dual-panel layout: Text input (left) and Preview (right) -->
     <div class="dual-panel-layout">
-      <!-- Left Panel: Plain text input -->
+      <!-- Left Panel: Plain text input or XML editor -->
       <div class="editor-panel no-print">
+        <!-- Panel header (XML mode only) -->
+        <div v-if="viewMode === 'xml'" class="xml-panel-header">
+          <span class="xml-panel-label">XML Source</span>
+          <button class="xml-back-btn" @click="viewMode = 'text'">← Back to text</button>
+        </div>
+
+        <!-- Text input (default mode) -->
         <textarea
+          v-if="viewMode === 'text'"
           v-model="textContent"
           class="text-input"
           :placeholder="placeholder"
           :disabled="isFormatting"
         />
+
+        <!-- XML editor (xml mode) -->
+        <textarea
+          v-else
+          v-model="formattedXml"
+          class="text-input xml-input"
+          spellcheck="false"
+        />
+
         <div class="action-bar">
-          <div class="type-selector">
-            <button
-              class="type-btn"
-              :class="{ 'type-btn--active': selectedDocType === 'resume' }"
-              :disabled="isFormatting"
-              @click="selectedDocType = 'resume'"
-            >
-              Resume
-            </button>
-            <button
-              class="type-btn"
-              :class="{ 'type-btn--active': selectedDocType === 'letter' }"
-              :disabled="isFormatting"
-              @click="selectedDocType = 'letter'"
-            >
-              Letter
-            </button>
-          </div>
-          <div class="action-row">
-            <UButton
-              :disabled="!textContent.trim() || isFormatting"
-              :loading="isFormatting"
-              @click="formatDocument"
-            >
-              {{ isFormatting ? 'Formatting...' : formatButtonLabel }}
-            </UButton>
-            <p v-if="validationMessage" class="validation-message">
-              {{ validationMessage }}
-            </p>
-          </div>
-          <div class="sample-row">
-            <span class="sample-label">Try a sample:</span>
-            <button class="sample-link" :disabled="isFormatting" @click="loadSample('resume')">Resume</button>
-            <span class="sample-sep">·</span>
-            <button class="sample-link" :disabled="isFormatting" @click="loadSample('letter')">Letter</button>
-          </div>
+          <template v-if="viewMode === 'text'">
+            <div class="type-selector">
+              <button
+                class="type-btn"
+                :class="{ 'type-btn--active': selectedDocType === 'resume' }"
+                :disabled="isFormatting"
+                @click="selectedDocType = 'resume'"
+              >
+                Resume
+              </button>
+              <button
+                class="type-btn"
+                :class="{ 'type-btn--active': selectedDocType === 'letter' }"
+                :disabled="isFormatting"
+                @click="selectedDocType = 'letter'"
+              >
+                Letter
+              </button>
+            </div>
+            <div class="action-row">
+              <UButton
+                :disabled="!textContent.trim() || isFormatting"
+                :loading="isFormatting"
+                @click="formatDocument"
+              >
+                {{ isFormatting ? 'Formatting...' : formatButtonLabel }}
+              </UButton>
+              <button
+                v-if="formattedXml"
+                class="xml-toggle-btn"
+                :disabled="isFormatting"
+                @click="viewMode = 'xml'"
+              >
+                Edit XML
+              </button>
+              <p v-if="validationMessage" class="validation-message">
+                {{ validationMessage }}
+              </p>
+            </div>
+            <div class="sample-row">
+              <span class="sample-label">Try a sample:</span>
+              <button class="sample-link" :disabled="isFormatting" @click="loadSample('resume')">Resume</button>
+              <span class="sample-sep">·</span>
+              <button class="sample-link" :disabled="isFormatting" @click="loadSample('letter')">Letter</button>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="action-row">
+              <UButton
+                variant="outline"
+                :disabled="isFormatting"
+                @click="reformat"
+              >
+                Re-format with AI
+              </UButton>
+            </div>
+          </template>
         </div>
       </div>
 
@@ -154,6 +193,7 @@ const documentType = ref('')
 const divergence = ref(0)
 const validationMessage = ref('')
 const selectedDocType = ref<'resume' | 'letter'>('resume')
+const viewMode = ref<'text' | 'xml'>('text')
 
 const formatButtonLabel = computed(() =>
   selectedDocType.value === 'letter' ? 'Format My Letter' : 'Format My Resume',
@@ -171,6 +211,11 @@ async function loadSample(type: 'resume' | 'letter') {
   const text = await response.text()
   textContent.value = text
   selectedDocType.value = type
+  formatDocument()
+}
+
+function reformat() {
+  viewMode.value = 'text'
   formatDocument()
 }
 
@@ -267,6 +312,48 @@ async function formatDocument() {
   cursor: not-allowed;
 }
 
+/* ── XML panel header ── */
+.xml-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+
+.xml-panel-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.xml-back-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.8rem;
+  color: #3b82f6;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.xml-back-btn:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ── XML input ── */
+.xml-input {
+  font-family: ui-monospace, SFMono-Regular, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  font-size: 0.8125rem;
+  color: #334155;
+  background: #fafafa;
+}
+
 /* ── Action bar ── */
 .action-bar {
   padding: 0.875rem 1.5rem;
@@ -326,6 +413,28 @@ async function formatDocument() {
 .validation-message {
   font-size: 0.8rem;
   color: #b45309;
+}
+
+.xml-toggle-btn {
+  background: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  color: #475569;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.xml-toggle-btn:hover:not(:disabled) {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.xml-toggle-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ── Right panel (preview canvas) ── */
