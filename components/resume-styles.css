@@ -11,7 +11,7 @@
  * Design spec:
  *   Font:      Inter, 'DM Sans', system-ui, -apple-system, sans-serif
  *   Name:      22px / 700
- *   Sections:  13px / 600 / ALL CAPS / letter-spacing 0.05em / border-bottom 1.5px solid
+ *   Sections:  13px / 600 / ALL CAPS / letter-spacing 0.05em / subtle separator
  *   Body:      13px / 400 / line-height 1.5
  *   Contact:   12px / #555
  *   Layout:    max-width 800px, padding 48px 64px
@@ -51,7 +51,9 @@ date, recipient, greeting, body, paragraph, closing, signature {
 
 /* ── header block ── */
 .document-render header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 /* ── applicant name ── */
@@ -89,14 +91,14 @@ date, recipient, greeting, body, paragraph, closing, signature {
 .document-render projects::before,
 .document-render volunteer::before {
   display: block;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #111;
-  border-bottom: 1.5px solid #111;
-  padding-bottom: 0.25rem;
-  margin-bottom: 0.75rem;
+  color: #444;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.3rem;
+  margin-bottom: 0.85rem;
   margin-top: 0;
 }
 
@@ -116,7 +118,7 @@ date, recipient, greeting, body, paragraph, closing, signature {
 .document-render certifications,
 .document-render projects,
 .document-render volunteer {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ── summary paragraph text ── */
@@ -126,7 +128,7 @@ date, recipient, greeting, body, paragraph, closing, signature {
 
 /* ── experience roles ── */
 .document-render role {
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .document-render role:last-child {
@@ -243,6 +245,12 @@ date, recipient, greeting, body, paragraph, closing, signature {
    ══════════════════════════════════════════════ */
 
 /* Shared header reuse — contact inline for letter too */
+.document-render document[type="cover-letter"] header {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
 .document-render document[type="cover-letter"] contact {
   display: flex;
   flex-wrap: wrap;
@@ -254,9 +262,9 @@ date, recipient, greeting, body, paragraph, closing, signature {
 /* Date line */
 .document-render document[type="cover-letter"] date {
   font-size: 13px;
-  color: #111;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  color: #555;
+  margin-top: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 /* Recipient block */
@@ -292,8 +300,8 @@ date, recipient, greeting, body, paragraph, closing, signature {
 .document-render paragraph {
   font-size: 13px;
   color: #111;
-  line-height: 1.6;
-  margin-bottom: 0.85rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
 }
 
 .document-render paragraph:last-child {
@@ -311,7 +319,7 @@ date, recipient, greeting, body, paragraph, closing, signature {
   font-size: 13px;
   font-weight: 600;
   color: #111;
-  margin-top: 2.5rem;
+  margin-top: 3rem;
 }
 
 /* ── Print ── */
@@ -325,6 +333,22 @@ date, recipient, greeting, body, paragraph, closing, signature {
     padding: 0;
     max-width: none;
     margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .document-render header {
+    border-bottom-color: #d1d5db;
+  }
+
+  .document-render summary::before,
+  .document-render experience::before,
+  .document-render education::before,
+  .document-render skills::before,
+  .document-render certifications::before,
+  .document-render projects::before,
+  .document-render volunteer::before {
+    border-bottom-color: #d1d5db;
   }
 
   .document-render role,
@@ -333,10 +357,21 @@ date, recipient, greeting, body, paragraph, closing, signature {
     break-inside: avoid;
   }
 
+  .document-render summary,
+  .document-render experience,
+  .document-render skills {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
   .document-render a {
     color: #111 !important;
     text-decoration: none !important;
   }
+
+  /* Ensure colors render in print */
+  .document-render name { color: #111 !important; }
+  .document-render contact { color: #555 !important; }
 }
 
 /* ── Responsive ── */
