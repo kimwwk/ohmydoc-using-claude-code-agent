@@ -15,6 +15,7 @@
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/ui": "^4.0.1",
     "@types/dompurify": "^3.0.5",
+    "@vercel/analytics": "^2.0.1",
     "dompurify": "^3.3.1",
     "htmlparser2": "^10.1.0",
     "nuxt": "^4.1.3",
