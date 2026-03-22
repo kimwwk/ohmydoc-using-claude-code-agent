@@ -4,7 +4,10 @@
       <!-- Brand -->
       <div class="brand">
         <span class="brand-name">OhMyDoc</span>
-        <span class="brand-tagline">Paste your resume or letter — get clean, professional formatting</span>
+        <div class="brand-copy">
+          <span class="brand-tagline">The Free Resume Formatter. Actually Free.</span>
+          <span class="brand-subheadline">Paste your plain text. Get a clean, ATS-friendly PDF instantly. No login, no paywalls, no BS. Just format and download.</span>
+        </div>
       </div>
 
       <!-- Right action slot -->
@@ -32,7 +35,7 @@
 
 .brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.75rem;
   min-width: 0;
 }
@@ -46,8 +49,25 @@
   flex-shrink: 0;
 }
 
+.brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .brand-tagline {
   font-size: 0.75rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-subheadline {
+  font-size: 0.65rem;
   color: #64748b;
   white-space: nowrap;
   overflow: hidden;

@@ -174,7 +174,7 @@
 import { ref, computed } from 'vue'
 
 useHead({
-  title: 'OhMyDoc — Free Resume Formatter | Paste → Format → PDF',
+  title: 'OhMyDoc | Free Resume Formatter (No Sign Up, ATS-Friendly)',
 })
 
 const placeholder = `Paste your resume or cover letter here.
