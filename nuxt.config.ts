@@ -6,16 +6,16 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'OhMyDoc — Free Resume Formatter | Paste → Format → PDF',
+      title: 'OhMyDoc | Free Resume Formatter (No Sign Up, ATS-Friendly)',
       meta: [
-        { name: 'description', content: 'Paste your resume, get instant professional formatting, export to PDF. No signup, no AI rewriting, no paywall. Free and open source.' },
+        { name: 'description', content: 'The actually free resume formatter. Paste your text from ChatGPT or Google Docs, get an ATS-friendly PDF instantly. No paywalls, no login required. Open source.' },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://ohmydoc.vercel.app' },
-        { property: 'og:title', content: 'OhMyDoc — Free Resume Formatter | Paste → Format → PDF' },
-        { property: 'og:description', content: 'Paste your resume, get instant professional formatting, export to PDF. No signup, no AI rewriting, no paywall. Free and open source.' },
+        { property: 'og:title', content: 'OhMyDoc | Free Resume Formatter (No Sign Up, ATS-Friendly)' },
+        { property: 'og:description', content: 'The actually free resume formatter. Paste your text from ChatGPT or Google Docs, get an ATS-friendly PDF instantly. No paywalls, no login required. Open source.' },
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'OhMyDoc — Free Resume Formatter | Paste → Format → PDF' },
-        { name: 'twitter:description', content: 'Paste your resume, get instant professional formatting, export to PDF. No signup, no AI rewriting, no paywall. Free and open source.' },
+        { name: 'twitter:title', content: 'OhMyDoc | Free Resume Formatter (No Sign Up, ATS-Friendly)' },
+        { name: 'twitter:description', content: 'The actually free resume formatter. Paste your text from ChatGPT or Google Docs, get an ATS-friendly PDF instantly. No paywalls, no login required. Open source.' },
       ],
     },
   },
