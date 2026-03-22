@@ -15,6 +15,7 @@
           >
             Export PDF
           </UButton>
+          <span v-if="formattedXml" class="ats-badge">✅ ATS-Friendly</span>
           <span class="export-hint">Works best in Chrome. In the print dialog, choose 'Save as PDF'.</span>
         </div>
       </template>
@@ -87,6 +88,7 @@
                 {{ validationMessage }}
               </p>
             </div>
+            <p class="ats-callout">✅ ATS-Friendly Formatting — works with all major applicant tracking systems</p>
             <div class="sample-row">
               <span class="sample-label">Try a sample:</span>
               <button class="sample-link" :disabled="isFormatting" @click="loadSample('resume')">Resume</button>
@@ -621,6 +623,27 @@ async function formatDocument() {
   font-size: 0.7rem;
   color: #94a3b8;
   white-space: nowrap;
+}
+
+/* ── ATS-Friendly badge (in export header area) ── */
+.ats-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 99px;
+  padding: 0.2rem 0.55rem;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* ── ATS-Friendly callout (in action bar below format button) ── */
+.ats-callout {
+  font-size: 0.775rem;
+  color: #16a34a;
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* ── Divergence info (subtle, not alarming) ── */
