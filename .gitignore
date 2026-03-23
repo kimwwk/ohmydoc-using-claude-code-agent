@@ -54,3 +54,10 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 .playwright-mcp/
+
+# Vercel
+.vercel/
+
+# IDE/Tool configs
+.mcp.json
+.claude/

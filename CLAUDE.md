@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**OhMyDoc** — a free, open-source resume and document formatter. Paste plain text, AI structures it into XML, and you get a clean, ATS-friendly PDF. Built with Nuxt 3.
+**OhMyDoc** — a free, open-source resume and document formatter. Paste plain text, AI structures it into XML, and you get a clean, ATS-friendly PDF. Built with Nuxt 4.
 
 **Live**: [ohmydoc.vercel.app](https://ohmydoc.vercel.app)
 
@@ -22,7 +22,7 @@ npm run lint:fix     # Auto-fix lint issues
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Nuxt 3 (Vue 3)
+- **Framework**: Nuxt 4 (Vue 3)
 - **Language**: TypeScript
 - **UI Components**: @nuxt/ui for app chrome (buttons, inputs, modals)
 - **Styling**: Vue Scoped CSS for document templates (must be exportable)
@@ -72,6 +72,26 @@ Two distinct styling approaches:
 3. Use scoped CSS only (no @nuxt/ui inside templates)
 4. Register in `composables/useTemplate.ts`
 5. Handle optional fields with `v-if`
+
+#### ⚠️ CSS Import Gotcha (Critical for Vercel)
+
+Templates **must** import their CSS via `<script>`, not `<style>`:
+
+```vue
+<script setup lang="ts">
+import './styles.css'  // ✅ CORRECT: Import CSS as module
+</script>
+
+<style scoped>
+/* Empty — Vue scoping is applied via this block */
+</style>
+```
+
+**Do NOT use:**
+- `<style scoped>@import './styles.css';</style>` — breaks in Vercel production
+- `<style scoped src="./styles.css"></style>` — also breaks in production
+
+Script imports ensure CSS is bundled correctly across all platforms.
 
 ### Debug Pages
 

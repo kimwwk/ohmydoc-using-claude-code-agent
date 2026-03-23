@@ -21,7 +21,6 @@ The output is ATS-friendly — works with all major applicant tracking systems.
 
 - **Resume** — professional formatting with sections for experience, education, skills
 - **Cover Letter** — clean business letter layout
-- **Resignation Letter** — formal resignation template
 
 ## Quick Start
 
@@ -74,7 +73,7 @@ Templates live in `/templates/{name}/` as Vue Single File Components. Each templ
 
 ## Tech Stack
 
-- **[Nuxt 3](https://nuxt.com)** (Vue 3) — app framework
+- **[Nuxt 4](https://nuxt.com)** (Vue 3) — app framework
 - **AI Providers** — Anthropic Claude, OpenAI, Google Gemini, and more
 - **DOMPurify** — HTML sanitization
 - **Vercel** — hosting with automatic deploys
