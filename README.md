@@ -1,79 +1,102 @@
-# Nuxt Minimal Starter
+# OhMyDoc — Free Resume Formatter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**Paste your plain text. Get a clean, ATS-friendly PDF instantly.**
 
-## Setup
+No login, no paywalls, no BS. Just format and download.
 
-Make sure to install dependencies:
+**[→ Try it now at ohmydoc.vercel.app](https://ohmydoc.vercel.app)**
+
+![OhMyDoc Screenshot](public/screenshot.png)
+
+## What It Does
+
+1. **Paste** your resume or cover letter as plain text
+2. **AI formats** it into clean, structured XML
+3. **Preview** the formatted document in real-time
+4. **Export** to PDF with one click
+
+The output is ATS-friendly — works with all major applicant tracking systems.
+
+## Supported Document Types
+
+- **Resume** — professional formatting with sections for experience, education, skills
+- **Cover Letter** — clean business letter layout
+- **Resignation Letter** — formal resignation template
+
+## Quick Start
 
 ```bash
-# npm
+git clone https://github.com/kimwwk/ohmydoc-using-claude-code-agent.git
+cd ohmydoc-using-claude-code-agent
+
+cp .env.example .env
+# Add at least one API key to .env (see below)
+
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Open [http://localhost:3000](http://localhost:3000) — you're ready to go.
 
-Build the application for production:
+### API Keys
+
+Add at least one provider to your `.env` file:
+
+| Provider | Key format | Required? |
+|----------|-----------|-----------|
+| Anthropic (Claude) | `sk-ant-api03-...` | Recommended |
+| OpenAI | `sk-proj-...` | Optional |
+| Google Gemini | `AIza...` | Optional |
+| Perplexity | `pplx-...` | Optional |
+| Mistral | — | Optional |
+| Groq | — | Optional |
+| OpenRouter | — | Optional |
+
+See `.env.example` for all supported providers.
+
+## How It Works
+
+```
+Plain Text → AI Formatting → XML → Template Rendering → HTML Preview → PDF Export
+```
+
+- **Input**: You paste unstructured text (your resume content)
+- **AI Pipeline**: An LLM parses your text and structures it into XML with semantic sections
+- **Template System**: Vue SFC templates render the XML into styled HTML
+- **Export**: Browser print-to-PDF produces a clean, portable document
+
+### Adding New Templates
+
+Templates live in `/templates/{name}/` as Vue Single File Components. Each template:
+- Receives parsed XML data as props
+- Has its own scoped CSS (no framework dependencies — must be exportable)
+- Can render the same data with completely different layouts
+
+## Tech Stack
+
+- **[Nuxt 3](https://nuxt.com)** (Vue 3) — app framework
+- **AI Providers** — Anthropic Claude, OpenAI, Google Gemini, and more
+- **DOMPurify** — HTML sanitization
+- **Vercel** — hosting with automatic deploys
+
+## Development
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run dev          # Start dev server at localhost:3000
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run lint:fix     # Auto-fix lint issues
 ```
 
-Locally preview production build:
+## Debug Pages
 
-```bash
-# npm
-npm run preview
+Component demo pages are available at `/debug/*` routes:
+- `/debug/parser` — XML parser testing
+- `/debug/template` — Template rendering showcase
+- `/debug/editor` — Editor component
+- `/debug/preview` — Preview panel with error handling
 
-# pnpm
-pnpm preview
+## License
 
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Testing
-
-Regression tests live in the [ohmydoc-qa](https://github.com/chillkimtest-oss/ohmydoc-qa) repo.
+MIT
